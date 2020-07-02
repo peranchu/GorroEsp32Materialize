@@ -114,13 +114,13 @@ server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
 
   server.begin();
 
-  //Configuración AUDIO
+ /*  //Configuración AUDIO
 audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
 audio.setVolume(10); //0...21
-audio.connecttoFS(SD, "/0002.mp3");
+audio.connecttoFS(SD, "/0002.mp3"); */
 
 }
 
 void loop() {
-  audio.loop();
+  //audio.loop();
 }
