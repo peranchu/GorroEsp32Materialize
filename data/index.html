@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="icon.css">
+    <link rel="stylesheet" href="materialize.min.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--PRELOADER-->
+    <div class="center section" id="circulo">
+        <div class="preloader-wrapper active">
+            <div class="spinner-layer spinner-red-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------------------------------------->
+    <div class="hide" id="contenido">
+        <!--NAVBAR-->
+        <nav>
+            <div class="nav-wrapper">
+                <div class="container">
+                    <a href="#" class="brand-logo">Control Módulo</a>
+                    <a href="#" data-target="menu-responsive" class="sidenav-trigger">
+                        <i class="material-icons">menu</i>
+                    </a>
+
+
+                    <ul class="right hide-on-med-and-down">
+                        <li><a href="sass.html"><i class="material-icons">battery_alert</i></a></li>
+                        <li><a href="badges.html"><i class="material-icons">wifi</i></a></li>
+                        <li><a href="collapsible.html"><i class="material-icons">refresh</i></a></li>
+                        <li><a href="mobile.html"><i class="material-icons">more_vert</i></a></li>
+                      </ul>
+                </div>
+          </nav>
+
+          <!--MENU LATERAL-->
+          <ul class="sidenav" id="menu-responsive">
+            <li><a href="sass.html"><i class="material-icons">battery_alert</i></a></li>
+            <li><a href="badges.html"><i class="material-icons">wifi</i></a></li>
+            <li><a href="collapsible.html"><i class="material-icons">refresh</i></a></li>
+            <li><a href="mobile.html"><i class="material-icons">more_vert</i></a></li>
+          </ul>
+
+          <!----------------------SUBIR   ARCHIVOS-->
+        <div class="container section">
+            <div class="row">
+                <form action="" class="col s12" id="form_datos">
+                    <div class="row card-panel">
+                        <div class="file-field input-field col s10">
+                            <div class="btn waves-effect waves-light">
+                                <i class="small material-icons">folder</i>
+                                <input type="file" id="entrada">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" id="campoTexto" type="text" name="campoDatos"
+                                    placeholder="Escoje un Archivo">
+                            </div>
+                        </div>
+
+                        <div class="hide" id="barra">
+                            <div class="progress" id="progressBar">
+                                <div class="determinate purple accent-1" id="relleno" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <button class="btn waves-effect waves-light right" type="submit" name="action">Subir
+                            <i class="material-icons right">file_upload</i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="materialize.min.js"></script>
+    <script src="script.js"></script>
+
+    <!--Script de Carga de la Página-->
+    <script>
+        //Precarga de la web
+        window.addEventListener('load', () => {
+            document.getElementById('circulo').className = 'hide';
+            document.getElementById('contenido').className = 'center';
+        });
+
+        //Carga los elementos de javaScript de Materialize
+        document.addEventListener('DOMContentLoaded', function(){
+            M.AutoInit();
+        });
+    </script>
+</body>
+
+</html>
