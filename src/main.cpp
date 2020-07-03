@@ -150,8 +150,9 @@ void loop() {
 
 //Explora los ficheros de la tarjeta SD
 void explorar_ficheros(File dir, int numTabs){
-  //directorios = SPIFFS.open("/dir.txt", "a");
-  SPIFFS.remove("/dir.txt");
+  
+  SPIFFS.remove("/dir.txt");  //Borra el contenido existente
+  
 
   while(true){
     File entry = dir.openNextFile();
@@ -162,24 +163,21 @@ void explorar_ficheros(File dir, int numTabs){
     /* for (uint8_t i = 0; i < numTabs; i++){
       Serial.print('\t');
     } */
+    
     directorios = SPIFFS.open("/dir.txt", "a");
-    Serial.printf("\"titulo\"" ":" " ");
-    directorios.print("\"titulo\"" ":" " ");
-    Serial.printf("\"%s\"\n", entry.name());
-    directorios.printf("\"%s\"\n", entry.name());
+    //Formatea el mensaje a guardar
+    Serial.printf("%s\n", entry.name());
+    directorios.printf("%s\n", entry.name());
   
     if(entry.isDirectory()){
       Serial.println("/");
       explorar_ficheros(entry, numTabs + 1);
     }else{
       //los archivos tienen tamaño, los directorios no
-      Serial.printf("\"size\"" ":" " ");
-      directorios.printf("\"size\"" ":" " ");
-      Serial.printf("%i""\n", entry.size());
-      directorios.printf("%i""\n", entry.size());
+      //Serial.printf("%i\n", entry.size());
+      //directorios.printf("%i\n", entry.size());
       //Serial.print("\t");
       //Serial.println(entry.size(), DEC);
-
     }
     entry.close();
     directorios.close();
