@@ -1,44 +1,29 @@
-var archivo = document.getElementById('entrada'); //instancia a File in en HTML
+const fileInput = document.getElementById('entrada'); //instancia a File_in en HTML
 
-var progress = document.getElementById('relleno'); //instancia a barra de progrso HTML
+var progress = document.getElementById('relleno'); //instancia a barra de progreso HTML
 
-document.querySelector('#traer_texto').addEventListener('click', traerTexto);
+document.querySelector('#traer_texto').addEventListener('click', traerTexto); //Boton para cargar los archivos en SD
 
-//Traer el archivo de texto desde el servidor
-/* function traerTexto() {
-  console.log("funcion activada");
-  const xhttp = new XMLHttpRequest();
-
-  xhttp.open('GET', 'dir.txt', true);
-
-  xhttp.send();
-
-  xhttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
-    }
-  }
-} */
 
 //Lee el texto del archivo archivos en SD
 var lines = new Array();
 
 function traerTexto() {
   fetch('dir.txt')
-  .then(res => res.text())
-  .then(content => {
-    lines = content.split(/\n/);
-    console.log(lines);
-    convertirJson();
-  });
+    .then(res => res.text())
+    .then(content => {
+      lines = content.split(/\n/);
+      console.log(lines);
+      convertirJson();
+    });
 }
 
 //Convierte a un objeto JSON el texto recibido archivos SD
-function convertirJson(){
+function convertirJson() {
   var list = {
-    'datos':[]
+    'datos': []
   };
-  for(var i = 0; i < lines.length; i++){
+  for (var i = 0; i < lines.length; i++) {
     list.datos.push({
       "titulo": lines[i]
     });
@@ -46,27 +31,31 @@ function convertirJson(){
   var json = JSON.stringify(list);
   console.log(json);
 }
+///////////////////////////////////////////
 
+//////////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////7
+//Validaciones Subida Archivo al SD
+fileInput.addEventListener('change', (e) => {  //detecta cuando se sube un archivo
+  const file = (event.target.files[0]);       //Accede a la informacion del fichero
+  //console.log(file);
 
+  var extensiones_p = ['mpeg', 'wav'];  //Extensiones permitidas de los archivos
 
-
-//Validaciones
-archivo.onchange = (event) => {
-  var file = (event.target.files[0]);
-
-  var extensiones_p = ['mpeg', 'wav'];
-
+  //Funcion que convierte el tamaño a MEGAS
   var tamano_p = function (mega) {
     return Math.pow(2, 20) * mega;
   }
-  var extension = file.type.split('/').pop();
+
+  var extension = file.type.split('/').pop(); //Separa / y Elimina del tipo "type: audio/mpeg"
 
 
-  if (extensiones_p.indexOf(extension) != -1) {
+  if (extensiones_p.indexOf(extension) != -1) {  //Si encuentra un archivo
     console.log('encontrado: ' + extension + ' ' + file.size);
-    if (file.size < tamano_p(5)) {
 
-      subirImagen(file);
+    if (file.size < tamano_p(5)) {  //Si su tamaño
+
+      Subir_Buffer(file);    //Sube la imagen
+
     } else {
       M.toast({
         html: 'Archivo demasiado Grande',
@@ -75,7 +64,7 @@ archivo.onchange = (event) => {
       });
       //alert("Archivo demasiado grande");
       //console.log('Archivo demasiado grande');
-      archivo.value = "";
+      fileInput.value = "";
     }
   } else {
     M.toast({
@@ -85,92 +74,83 @@ archivo.onchange = (event) => {
     });
     //alert("Archivo incorrecto: " + extensiones_p.toString());
     //console.log('extension incorrecta: ' + extensiones_p.toString());
-    archivo.value = "";
+    fileInput.value = "";
   }
-}
+});
+/////////////////////////////////////////
 
 //Subir imagen al buffer de memoria
-function subirImagen(file) {
+function Subir_Buffer(file) {
 
-  var file_r = new FileReader(); //Maneja el archivo para subirlo al buffer
+  const file_r = new FileReader(); //Maneja el archivo para subirlo al buffer
+
+  file_r.readAsDataURL(file); // Leer desde una ubicacion
 
   file_r.onloadstart = (event) => {
     console.log("comenzando");
     console.log(event.loaded);
   }
-
   file_r.onloadend = (event) => {
     console.log("termino");
     console.log("Se cargó: " + event.loaded);
   }
-
   file_r.onload = (event) => {
 
   }
-
-  file_r.readAsDataURL(file);
 }
 
-//Envio Formulario
+//Envio Formulario, Subida de Archivo al SD
 var formulario = document.getElementById("form_datos");
 
 formulario.addEventListener('submit', (event) => {
   event.preventDefault();
 
-  if (archivo.files.length == 0) {
+  if (fileInput.files.length == 0) {  //Si se intenta subir sin seleccionar archivo
     M.toast({
       html: 'Selecciona un Archivo de Audio',
       displayLength: 1500,
       classes: 'red lighten-1 rounded'
     });
-    //alert("seleccione un archivo de audio");
-    //console.log("Seleccione un archivo");
     return;
   }
+
   //Mete los datos del archivo dentro del formulario
   var dataform = new FormData(formulario);
-  dataform.append('musica', archivo.files[0]);
+  dataform.append('musica', fileInput.files[0]);
 
 
-
-  //Peticion de envio AJAX
+  //Peticion de envio AJAX -- Sube archivo de Audio a la SD
   var xhr = new XMLHttpRequest();
 
   xhr.open('POST', '/subida');
 
-  //Muestra la barra de Estado de la subida
+  //Muestra la barra de Estado de la subida, cambia atributo hide
   document.getElementById('barra').className = 'center';
 
-  xhr.upload.addEventListener("progress", e => {
-    const percent = e.lengthComputable ? (e.loaded / e.total) * 100 : 0;
+  xhr.upload.addEventListener("progress", (e) => {
+    const percent = e.lengthComputable ? (e.loaded / e.total) * 100 : 0; //Calculo del porcentaje de subida
 
-    progress.style.width = percent.toFixed(2) + "%";
+    progress.style.width = percent.toFixed(2) + "%"; //dibuja el porcentaje en la barra porpiedad "width"
   });
 
-  xhr.onload = () => {
+  xhr.onload = () => {      //Archivo subido
     if (xhr.status === 200) {
-      document.getElementById('barra').className = 'hide';
-      archivo.value = "";
-      //console.log("se envian datos");
+      document.getElementById('barra').className = 'hide';  //oculta barra de subida
+      fileInput.value = "";  //borra el campo de texto del file_input
       M.toast({
         html: 'Archivo Subido',
         displayLength: 1500,
         classes: "purple lighten-3 rounded"
-
       });
-      //alert("Archivo Subido");
     } else {
-      //console.log("Error" + xhr.status);
       M.toast({
         html: 'Imposible subir Archivo',
         displayLength: 1500,
         classes: "red lighten-1 rounded"
       });
-      //alert("Imposible subir archivo" + xhr.status);
-      archivo.value = "";
+      fileInput.value = "";
       document.getElementById('barra').className = 'hide';
     }
   }
-
   xhr.send(dataform);
 });
