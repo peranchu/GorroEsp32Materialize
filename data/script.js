@@ -2,6 +2,23 @@
 var archivo = document.getElementById('entrada'); //instancia a File in en HTML
 
 var progress = document.getElementById('relleno'); //instancia a barra de progrso HTML
+
+document.querySelector('#traer_texto').addEventListener('click', traerTexto);
+
+function traerTexto(){
+  console.log("funcion activada");
+  const xhttp = new XMLHttpRequest();
+
+  xhttp.open('GET', 'dir.txt', true);
+
+  xhttp.send();
+
+  xhttp.onreadystatechange = function(){
+    if(this.readyState == 4 && this.status == 200){
+      console.log(this.responseText);
+     }
+  }  
+}
   
 //Validaciones
 archivo.onchange = (event) =>{
