@@ -16,19 +16,23 @@ Audio audio;
 
 
 bool SD_present;
-File archivo;      //Utilizado para escribir en la SD los archivos que se envian
-File root;        //Explorar Archivos tarjeta SD
-File directorios; //Guardar nombres de archivos en JSON
+File archivo;               //Utilizado para escribir en la SD los archivos que se envian
+File root;                  //Accede a la raiz de la tarjeta SD
+File multi;                 //Ficheros multiples
+File contador;                //Explorar Archivos tarjeta SD
+File directorios;             //Guardar nombres de archivos en JSON
+int numero_ficheros;    //Numero de archivos guardados en SD
+int total_ficheros = 0;       //Almacena numero total del archivos de la SD
 
-void explorar_ficheros(File dir, int numTabs);
 
-const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_OBJECT_SIZE(2);
-DynamicJsonDocument doc(capacity);
+void explorar_ficheros();
+int contador_archivos();
 
 const char *ssid = "Bocarral";
 const char *pass = "TexucaLana72";
 
 AsyncWebServer server (80);
+
 
 //Manejo de la carga de Archivos
 void handleUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
@@ -122,8 +126,8 @@ server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
   });
 
-  server.on("/dir.txt", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/dir.txt", "text/text");
+  server.on("/dir.json", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/dir.json", "text/json");
   });
 
   server.on("/subida", HTTP_POST, [](AsyncWebServerRequest *request){ 
@@ -133,8 +137,9 @@ server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
 
   ////////////////////////////////////////////////////////////////
 
-root = SD.open("/");
-explorar_ficheros(root, 0);
+
+//contador_archivos();
+explorar_ficheros();
 
 
  /*  //Configuración AUDIO
@@ -148,38 +153,75 @@ void loop() {
   //audio.loop();
 }
 
-//Explora los ficheros de la tarjeta SD
-void explorar_ficheros(File dir, int numTabs){
-  
-  SPIFFS.remove("/dir.txt");  //Borra el contenido existente
-  
 
+//Contador Numero de archivos en SD
+int contador_archivos(){
+  root = SD.open("/");
+  File cuenta;
+  numero_ficheros = 0;
   while(true){
-    File entry = dir.openNextFile();
-    if(!entry){
-      //No hay más ficheros
-      break;
+    cuenta = root.openNextFile();
+    if(!cuenta){
+      //No más ficheros
+      cuenta.close();
+      return numero_ficheros;
     }
-    /* for (uint8_t i = 0; i < numTabs; i++){
-      Serial.print('\t');
-    } */
-    
-    directorios = SPIFFS.open("/dir.txt", "a");
-    //Formatea el mensaje a guardar
-    Serial.printf("%s\n", entry.name());
-    directorios.printf("%s\n", entry.name());
-  
-    if(entry.isDirectory()){
-      Serial.println("/");
-      explorar_ficheros(entry, numTabs + 1);
-    }else{
-      //los archivos tienen tamaño, los directorios no
-      //Serial.printf("%i\n", entry.size());
-      //directorios.printf("%i\n", entry.size());
-      //Serial.print("\t");
-      //Serial.println(entry.size(), DEC);
-    }
-    entry.close();
-    directorios.close();
+    numero_ficheros ++;
   }
 }
+
+
+//Explora los ficheros de la tarjeta SD
+void explorar_ficheros(){
+  numero_ficheros = contador_archivos();
+  root = SD.open("/");
+
+  SPIFFS.remove("/dir.json");
+  
+  directorios = SPIFFS.open("/dir.json", "a");
+    if (!directorios) {
+      Serial.println("No se pudo abrir el archivo");
+    }
+  
+  if(numero_ficheros > 1){
+    
+    Serial.print("[");
+    directorios.print("[");
+
+    for(int i = 0; i < numero_ficheros - 1; i++){
+    multi = root.openNextFile();
+
+    if(!multi){
+      Serial.println("sin archivos");
+      return;
+    }
+    Serial.print("{\"titulo\":");
+    directorios.print("{\"titulo\":");
+    Serial.printf("\"%s\"", multi.name());
+    directorios.printf("\"%s\"", multi.name());
+    Serial.print(",\"size\":");
+    directorios.print(",\"size\":");
+    Serial.printf("%i", multi.size());
+    directorios.printf("%i", multi.size());
+    Serial.print("},");
+    directorios.print("},");
+    }
+
+    multi = root.openNextFile();
+
+    Serial.print("{\"titulo\":");
+    directorios.print("{\"titulo\":");
+    Serial.printf("\"%s\"", multi.name());
+    directorios.printf("\"%s\"", multi.name());
+    Serial.print(",\"size\":");
+    directorios.print(",\"size\":");
+    Serial.printf("%i", multi.size());
+    directorios.printf("%i", multi.size());
+    Serial.print("}");
+    directorios.print("}");
+    Serial.print("]");
+    directorios.print("]");
+  } 
+  directorios.close(); 
+}
+

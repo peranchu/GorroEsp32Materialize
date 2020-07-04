@@ -9,29 +9,15 @@ document.querySelector('#traer_texto').addEventListener('click', traerTexto); //
 var lines = new Array();
 
 function traerTexto() {
-  fetch('dir.txt')
-    .then(res => res.text())
+  fetch('dir.json')
+    .then(res => res.json())
     .then(content => {
-      lines = content.split(/\n/);
-      console.log(lines);
-      convertirJson();
+      console.log(content);
     });
 }
 
-//Convierte a un objeto JSON el texto recibido archivos SD
-function convertirJson() {
-  var list = {
-    'datos': []
-  };
-  for (var i = 0; i < lines.length; i++) {
-    list.datos.push({
-      "titulo": lines[i]
-    });
-  };
-  var json = JSON.stringify(list);
-  console.log(json);
-}
 ///////////////////////////////////////////
+
 
 //////////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////7
 //Validaciones Subida Archivo al SD

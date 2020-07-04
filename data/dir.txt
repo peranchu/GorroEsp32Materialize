@@ -1,5 +1,0 @@
-/0002.MP3
-/01.TXT
-/prueba.txt
-/tpaSound.mp3
-/dir.txt
