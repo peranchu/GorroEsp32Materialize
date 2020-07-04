@@ -16,13 +16,14 @@ Audio audio;
 
 
 bool SD_present;
-File archivo;               //Utilizado para escribir en la SD los archivos que se envian
-File root;                  //Accede a la raiz de la tarjeta SD
-File multi;                 //Ficheros multiples
-File contador;                //Explorar Archivos tarjeta SD
-File directorios;             //Guardar nombres de archivos en JSON
-int numero_ficheros;    //Numero de archivos guardados en SD
-int total_ficheros = 0;       //Almacena numero total del archivos de la SD
+File archivo;                //Utilizado para escribir en la SD los archivos que se envian
+File root;                   //Accede a la raiz de la tarjeta SD
+File multi;                  //Ficheros multiples
+File single;                 //Ficheros simples
+File contador;               //Explorar Archivos tarjeta SD
+File directorios;            //Guardar nombres de archivos en JSON
+int numero_ficheros;         //Numero de archivos guardados en SD
+int total_ficheros = 0;      //Almacena numero total del archivos de la SD
 
 
 void explorar_ficheros();
@@ -173,17 +174,36 @@ int contador_archivos(){
 
 //Explora los ficheros de la tarjeta SD
 void explorar_ficheros(){
-  numero_ficheros = contador_archivos();
+  numero_ficheros = contador_archivos(); //Cuenta el numero de archivos escritos en la SD
   root = SD.open("/");
 
-  SPIFFS.remove("/dir.json");
-  
+  SPIFFS.remove("/dir.json");  //Limpia el archivo para ser leido
+
   directorios = SPIFFS.open("/dir.json", "a");
     if (!directorios) {
       Serial.println("No se pudo abrir el archivo");
     }
+
+  if(numero_ficheros == 1){  //Cuando solo hay un archivo en la SD
+    Serial.println("dentro_1");
+    single = root.openNextFile();
+
+
+    Serial.print("{\"titulo\":");
+    directorios.print("{\"titulo\":");
+    Serial.printf("\"%s\"", multi.name());
+    directorios.printf("\"%s\"", multi.name());
+    Serial.print(",\"size\":");
+    directorios.print(",\"size\":");
+    Serial.print("}");
+    directorios.print("}");
+
+    single.close();
+    directorios.close();
+    return;  
+  }
   
-  if(numero_ficheros > 1){
+  if(numero_ficheros > 1){  // Cuando hay más de un archivo
     
     Serial.print("[");
     directorios.print("[");
@@ -206,7 +226,7 @@ void explorar_ficheros(){
     Serial.print("},");
     directorios.print("},");
     }
-
+    //Imprime el último para cerrar el format JSON
     multi = root.openNextFile();
 
     Serial.print("{\"titulo\":");
@@ -223,5 +243,6 @@ void explorar_ficheros(){
     directorios.print("]");
   } 
   directorios.close(); 
+  multi.close();
 }
 

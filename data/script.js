@@ -5,7 +5,7 @@ var progress = document.getElementById('relleno'); //instancia a barra de progre
 document.querySelector('#traer_texto').addEventListener('click', traerTexto); //Boton para cargar los archivos en SD
 
 
-//Lee el texto del archivo archivos en SD
+//Lee el JSON del archivo en SPIFFS
 var lines = new Array();
 
 function traerTexto() {
@@ -15,7 +15,6 @@ function traerTexto() {
       console.log(content);
     });
 }
-
 ///////////////////////////////////////////
 
 
