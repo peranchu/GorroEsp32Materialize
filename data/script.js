@@ -6,13 +6,24 @@ document.querySelector('#traer_texto').addEventListener('click', traerTexto); //
 
 
 //Lee el JSON del archivo en SPIFFS
-var lines = new Array();
-
 function traerTexto() {
   fetch('dir.json')
     .then(res => res.json())
     .then(content => {
-      console.log(content);
+      
+      //Muestra los datos del JSON en la tabla
+      let res = document.querySelector('#response');
+      res.innerHTML = '';
+
+      for(let item of content){
+        //console.log(item.titulo);
+        res.innerHTML +=`
+          <tr>
+            <td>${item.titulo}</td>
+            <td>${item.size}</td>
+          </tr>  
+        `
+      }
     });
 }
 ///////////////////////////////////////////

@@ -25,7 +25,7 @@ File directorios;            //Guardar nombres de archivos en JSON
 int numero_ficheros;         //Numero de archivos guardados en SD
 int total_ficheros = 0;      //Almacena numero total del archivos de la SD
 
-
+//Funciones Prototipo
 void explorar_ficheros();
 int contador_archivos();
 
@@ -136,10 +136,8 @@ server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
 
   server.begin();
 
-  ////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 
-
-//contador_archivos();
 explorar_ficheros();
 
 
@@ -221,7 +219,7 @@ void explorar_ficheros(){
     directorios.printf("\"%s\"", multi.name());
     Serial.print(",\"size\":");
     directorios.print(",\"size\":");
-    Serial.printf("%i", multi.size());
+    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
     directorios.printf("%i", multi.size());
     Serial.print("},");
     directorios.print("},");
@@ -235,7 +233,7 @@ void explorar_ficheros(){
     directorios.printf("\"%s\"", multi.name());
     Serial.print(",\"size\":");
     directorios.print(",\"size\":");
-    Serial.printf("%i", multi.size());
+    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
     directorios.printf("%i", multi.size());
     Serial.print("}");
     directorios.print("}");
