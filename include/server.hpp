@@ -1,10 +1,10 @@
+//
 //Configuración SERVIDOR
 
-File archivo;                //Utilizado para escribir en la SD los archivos que se envian
-     //Almacena numero total del archivos de la SD
+File archivo;   //Utilizado para escribir en la SD los archivos que se envian
+     
 
-
-AsyncWebServer server (80);
+AsyncWebServer server (80);     // INSTANCIA Y PUERTO SERVIDOR
 
 //Manejo de la carga de Archivos
 void handleUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
@@ -12,20 +12,16 @@ void handleUpload(AsyncWebServerRequest *request, String filename, size_t index,
     if(!filename.startsWith("/")) filename = "/" + filename;
     Serial.println("UploadStart: " + filename);
   
-    //request->_tempFile = SD.open(filename, FILE_WRITE);
     archivo = SD.open(filename, FILE_WRITE);
   }
   if(len){
     Serial.println("escribiendo...");
-    //request->_tempFile.write(data, len);
     archivo.write(data, len);
   }
 
   if(final){
     Serial.println("UploadEnd: " + filename + "," + index + "," + len);
-    //request->_tempFile.close();
     archivo.close();
-
     request->send(200, "text/plain", "Archivo Subido");
   }
 }
@@ -35,7 +31,9 @@ void handleUpload(AsyncWebServerRequest *request, String filename, size_t index,
 
 void InitServer(){
 
-//Servir archivos desde el servidor
+///////////////ARCHIVOS SERVIDOS//////////////////////////////
+
+//ARCHIVOS DEL FRAMEWORK MATERIALIZE
   server.on("/materialize.min.css", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/materialize.min.css", "text/css");
   });
@@ -48,28 +46,24 @@ void InitServer(){
     request->send(SPIFFS, "/materialize.min.js", "text/javascript");
   });
 
-////////////////////////////////////////
+//ARCHIVOS DE LAS PETICIONES DEL CLIENTE///////////////////////////////
 server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/favicon.png", "image/png");
-  });
-
-server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/script.js", "text/javascript");
-  });
-
-  server.on("/upload.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/upload.js", "text/javascript");
   });
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
   });
 
+server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/script.js", "text/javascript");
+  });
+
   server.on("/dir.json", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/dir.json", "text/json");
   });
 
-  server.on("/subida", HTTP_POST, [](AsyncWebServerRequest *request){ 
+  server.on("/subida", HTTP_POST, [](AsyncWebServerRequest *request){  
     request->send(200);}, handleUpload);
 
   server.begin();

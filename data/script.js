@@ -1,9 +1,12 @@
+//SCRIPT CONTROL
+
 const fileInput = document.getElementById('entrada'); //instancia a File_in en HTML
 
 var progress = document.getElementById('relleno'); //instancia a barra de progreso HTML
 
 document.querySelector('#traer_texto').addEventListener('click', traerTexto); //Boton para cargar los archivos en SD
 
+///////////////////////////////////////////////
 
 //Lee el JSON del archivo en SPIFFS
 function traerTexto() {
@@ -29,7 +32,8 @@ function traerTexto() {
 ///////////////////////////////////////////
 
 
-//////////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////7
+//////////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////
+
 //Validaciones Subida Archivo al SD
 fileInput.addEventListener('change', (e) => {  //detecta cuando se sube un archivo
   const file = (event.target.files[0]);       //Accede a la informacion del fichero
@@ -45,21 +49,20 @@ fileInput.addEventListener('change', (e) => {  //detecta cuando se sube un archi
   var extension = file.type.split('/').pop(); //Separa / y Elimina del tipo "type: audio/mpeg"
 
 
-  if (extensiones_p.indexOf(extension) != -1) {  //Si encuentra un archivo
+  if (extensiones_p.indexOf(extension) != -1) {  //Si encuentra un archivo...
     console.log('encontrado: ' + extension + ' ' + file.size);
 
-    if (file.size < tamano_p(5)) {  //Si su tamaño
+    if (file.size < tamano_p(5)) {  //Si su tamaño...
 
-      Subir_Buffer(file);    //Sube la imagen
+      Subir_Buffer(file);          //Sube la imagen
 
     } else {
-      M.toast({
+      M.toast({  //Avisos de ALERTA
         html: 'Archivo demasiado Grande',
         displayLength: 1500,
         classes: 'red lighten-1 rounded'
       });
-      //alert("Archivo demasiado grande");
-      //console.log('Archivo demasiado grande');
+     
       fileInput.value = "";
     }
   } else {
@@ -68,8 +71,7 @@ fileInput.addEventListener('change', (e) => {  //detecta cuando se sube un archi
       displayLength: 1500,
       classes: 'red lighten-1 rounded'
     });
-    //alert("Archivo incorrecto: " + extensiones_p.toString());
-    //console.log('extension incorrecta: ' + extensiones_p.toString());
+    
     fileInput.value = "";
   }
 });
@@ -80,7 +82,7 @@ function Subir_Buffer(file) {
 
   const file_r = new FileReader(); //Maneja el archivo para subirlo al buffer
 
-  file_r.readAsDataURL(file); // Leer desde una ubicacion
+  file_r.readAsDataURL(file);     // Leer desde una ubicacion
 
   file_r.onloadstart = (event) => {
     console.log("comenzando");
@@ -112,7 +114,7 @@ formulario.addEventListener('submit', (event) => {
 
   //Mete los datos del archivo dentro del formulario
   var dataform = new FormData(formulario);
-  dataform.append('musica', fileInput.files[0]);
+  dataform.append('musica', fileInput.files[0]);   //Adjunta el archivo al formulario
 
 
   //Peticion de envio AJAX -- Sube archivo de Audio a la SD

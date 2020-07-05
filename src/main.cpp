@@ -13,22 +13,23 @@
 #include "Esp32_utils.hpp"
 #include "archivos.hpp"
 
+/////////////////////////////////////////
 
-#define I2S_DOUT 25 //DIN
-#define I2S_BCLK 27 //Bit Clock
-#define I2S_LRC  26 //Left Right Clock
+////////////PINES AUDIO MAX98357A/////////////////////////////
+#define I2S_DOUT 25   //DIN
+#define I2S_BCLK 27   //Bit Clock
+#define I2S_LRC  26   //Left Right Clock
 
 Audio audio;
 
 
-bool SD_present;
+bool SD_present;   //Almacena Si la SD Está Presente
 
 
 void setup() {
   Serial.begin(115200);
-  //SPI.begin(18,19,23);
 
-  pinMode(19, INPUT_PULLUP);
+  pinMode(19, INPUT_PULLUP);   //PIN CS Tarjeta SD
 
 //Inicio Sistema de Archivos SPIFFS
   if(!SPIFFS.begin(true)){
@@ -48,11 +49,12 @@ void setup() {
     SD_present = true;
   }
   /////////////////////////////////////
-  ConnectWiFi_STA();
 
-  InitServer();
+  ConnectWiFi_STA();       //INICIA CONEXIÓN WiFi
 
-  explorar_ficheros();
+  InitServer();            //INICIA SERVIDOR
+
+  explorar_ficheros();    //PRIMERA EXPLORACIÓN ARCHIVOS SD
 
 
  /*  //Configuración AUDIO

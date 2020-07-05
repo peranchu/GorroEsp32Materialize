@@ -1,5 +1,5 @@
-
-//MANEJO DE ARCHIVOS EN LA SD
+//
+//////////////MANEJO DE ARCHIVOS EN LA SD //////////////////////////
 
 File root;                   //Accede a la raiz de la tarjeta SD
 File multi;                  //Ficheros multiples
@@ -9,6 +9,7 @@ File directorios;            //Guardar nombres de archivos en JSON
 int numero_ficheros;         //Numero de archivos guardados en SD
 int total_ficheros = 0; 
 
+////////////////////////////////////////////////////////////7
 //Contador Numero de archivos en SD
 int contador_archivos(){
   root = SD.open("/");
@@ -24,38 +25,45 @@ int contador_archivos(){
     numero_ficheros ++;
   }
 }
+//////////////////////////////////////////
 
 //Explora los ficheros de la tarjeta SD
 void explorar_ficheros(){
   numero_ficheros = contador_archivos(); //Cuenta el numero de archivos escritos en la SD
   root = SD.open("/");
 
-  SPIFFS.remove("/dir.json");  //Limpia el archivo para ser leido
+  SPIFFS.remove("/dir.json");     //Limpia el archivo para ser leido
 
+  //PREPARA La Memoria para EScribir
   directorios = SPIFFS.open("/dir.json", "a");
     if (!directorios) {
       Serial.println("No se pudo abrir el archivo");
     }
-
+  
+  ///////////SI EXISTE SÓLO UN FICHERO EN LA TARJETA SD//////////////////////////////
   if(numero_ficheros == 1){  //Cuando solo hay un archivo en la SD
     Serial.println("dentro_1");
     single = root.openNextFile();
 
-
-    Serial.print("{\"titulo\":");
     directorios.print("{\"titulo\":");
-    Serial.printf("\"%s\"", multi.name());
     directorios.printf("\"%s\"", multi.name());
-    Serial.print(",\"size\":");
     directorios.print(",\"size\":");
-    Serial.print("}");
+    directorios.printf("%3.2f", float((multi.size()) / 1048576.0));
     directorios.print("}");
 
+    ///////////////DEPURACIÓN/////////////////////
+    Serial.print("{\"titulo\":");
+    Serial.printf("\"%s\"", multi.name());
+    Serial.print(",\"size\":");
+    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
+    Serial.print("}");
+    
     single.close();
     directorios.close();
     return;  
   }
   
+  ///////////SI EXISTEN MÁS DE UN FICHERO EN LA TARJETA SD////////////////////
   if(numero_ficheros > 1){  // Cuando hay más de un archivo
     
     Serial.print("[");
@@ -68,33 +76,40 @@ void explorar_ficheros(){
       Serial.println("sin archivos");
       return;
     }
-    Serial.print("{\"titulo\":");
+
     directorios.print("{\"titulo\":");
-    Serial.printf("\"%s\"", multi.name());
     directorios.printf("\"%s\"", multi.name());
-    Serial.print(",\"size\":");
     directorios.print(",\"size\":");
-    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
-    directorios.printf("%i", multi.size());
-    Serial.print("},");
+    directorios.printf("%3.2f", float((multi.size()) / 1048576.0));
     directorios.print("},");
+    
+    /////////////DEPURACIÓN//////////////////
+    Serial.print("{\"titulo\":");
+    Serial.printf("\"%s\"", multi.name());
+    Serial.print(",\"size\":");
+    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
+    Serial.print("},");
     }
+
     //Imprime el último para cerrar el format JSON
     multi = root.openNextFile();
 
-    Serial.print("{\"titulo\":");
     directorios.print("{\"titulo\":");
-    Serial.printf("\"%s\"", multi.name());
     directorios.printf("\"%s\"", multi.name());
-    Serial.print(",\"size\":");
     directorios.print(",\"size\":");
-    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
-    directorios.printf("%i", multi.size());
-    Serial.print("}");
+    directorios.printf("%3.2f", float((multi.size()) / 1048576.0));
     directorios.print("}");
-    Serial.print("]");
     directorios.print("]");
+
+    //////////////DEPURACIÓN/////////////////////////
+    Serial.print("{\"titulo\":");
+    Serial.printf("\"%s\"", multi.name());
+    Serial.print(",\"size\":");
+    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
+    Serial.print("}");
+    Serial.print("]");
   } 
+
   directorios.close(); 
   multi.close();
 }

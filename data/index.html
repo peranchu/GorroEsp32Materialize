@@ -71,24 +71,25 @@
                                     placeholder="Escoje un Archivo">
                             </div>
                         </div>
-
+                        <!--BARRA DE PROGRESO-->
                         <div class="hide" id="barra">
                             <div class="progress" id="progressBar">
                                 <div class="determinate purple accent-1" id="relleno" style="width: 0%"></div>
                             </div>
                         </div>
-
                         <br>
+                        <!--BOTÓN SUBIDA ARCHIVOS-->
                         <button class="btn waves-effect waves-light right" type="submit" name="action">Subir
                             <i class="material-icons right">file_upload</i>
                         </button>
                     </div>
                 </form>
             </div>
+            <!--BOTON REFRESCAR Y TRAER JSON ARCHIVOS SPIFFS-->
             <button class="btn waves-effect waves-light" id="traer_texto">Archivos
                 <i class="material-icons right">refresh</i>
-
             </button>
+            <!--TABLA REPRESENTACIÓN DE ARCHIVOS SD-->
             <table>
                 <thead>
                     <tr>
@@ -105,7 +106,7 @@
 
 
 
-
+    <!--SCRIPTS CONTROL Y FRAMEWORK-->
     <script src="materialize.min.js"></script>
     <script src="script.js"></script>
 
