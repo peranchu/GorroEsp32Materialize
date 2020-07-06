@@ -12,6 +12,7 @@
 #include "server.hpp"
 #include "Esp32_utils.hpp"
 #include "archivos.hpp"
+#include "websocket.hpp"
 
 /////////////////////////////////////////
 
@@ -50,11 +51,13 @@ void setup() {
   }
   /////////////////////////////////////
 
-  ConnectWiFi_STA();       //INICIA CONEXIÓN WiFi
+  ConnectWiFi_STA();         //INICIA CONEXIÓN WiFi
+
+  InitWebSocket();          //INICIA LOS SERVICIOS WEBSOCKET
 
   InitServer();            //INICIA SERVIDOR
 
-  explorar_ficheros();    //PRIMERA EXPLORACIÓN ARCHIVOS SD
+  //explorar_ficheros();    //PRIMERA EXPLORACIÓN ARCHIVOS SD
 
 
  /*  //Configuración AUDIO

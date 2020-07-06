@@ -1,26 +1,33 @@
-//SCRIPT CONTROL
+//____________________________________SCRIPT CONTROL________________________________
 
-const fileInput = document.getElementById('entrada'); //instancia a File_in en HTML
+/*
+============================INSTACIACIÓN ELEMENTOS DEL DOMM=================================
+*/
+const fileInput = document.getElementById('entrada');                             //instancia a File_in en HTML
+var progress = document.getElementById('relleno');                                //instancia a barra de progreso HTML
+document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD);     //Boton para cargar los archivos en SD
+document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS);  //Boton conexion ON
+document.querySelector('#conexionWs_off').addEventListener('click', desconectar); //Boton desconexion OFF
 
-var progress = document.getElementById('relleno'); //instancia a barra de progreso HTML
+//FIN ELEMENTOS INSTANCIACIÓN DOMM==========================================
 
-document.querySelector('#traer_texto').addEventListener('click', traerTexto); //Boton para cargar los archivos en SD
-
-///////////////////////////////////////////////
 
 //Lee el JSON del archivo en SPIFFS
-function traerTexto() {
+function traerJSON_SD() {
+  PeticionRefrescoSD();  //Refresca la lista de archivos de la SD antes de leerlos
+
+  //Empieza a leer el archvio JSON con los ficheros de la SD
   fetch('dir.json')
     .then(res => res.json())
     .then(content => {
-      
+
       //Muestra los datos del JSON en la tabla
       let res = document.querySelector('#response');
       res.innerHTML = '';
 
-      for(let item of content){
+      for (let item of content) {
         //console.log(item.titulo);
-        res.innerHTML +=`
+        res.innerHTML += `
           <tr>
             <td>${item.titulo}</td>
             <td>${item.size}</td>
@@ -35,11 +42,11 @@ function traerTexto() {
 //////////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////
 
 //Validaciones Subida Archivo al SD
-fileInput.addEventListener('change', (e) => {  //detecta cuando se sube un archivo
-  const file = (event.target.files[0]);       //Accede a la informacion del fichero
+fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archivo
+  const file = (event.target.files[0]); //Accede a la informacion del fichero
   //console.log(file);
 
-  var extensiones_p = ['mpeg', 'wav'];  //Extensiones permitidas de los archivos
+  var extensiones_p = ['mpeg', 'wav']; //Extensiones permitidas de los archivos
 
   //Funcion que convierte el tamaño a MEGAS
   var tamano_p = function (mega) {
@@ -49,20 +56,20 @@ fileInput.addEventListener('change', (e) => {  //detecta cuando se sube un archi
   var extension = file.type.split('/').pop(); //Separa / y Elimina del tipo "type: audio/mpeg"
 
 
-  if (extensiones_p.indexOf(extension) != -1) {  //Si encuentra un archivo...
+  if (extensiones_p.indexOf(extension) != -1) { //Si encuentra un archivo...
     console.log('encontrado: ' + extension + ' ' + file.size);
 
-    if (file.size < tamano_p(5)) {  //Si su tamaño...
+    if (file.size < tamano_p(5)) { //Si su tamaño...
 
-      Subir_Buffer(file);          //Sube la imagen
+      Subir_Buffer(file); //Sube la imagen
 
     } else {
-      M.toast({  //Avisos de ALERTA
+      M.toast({ //Avisos de ALERTA
         html: 'Archivo demasiado Grande',
         displayLength: 1500,
         classes: 'red lighten-1 rounded'
       });
-     
+
       fileInput.value = "";
     }
   } else {
@@ -71,7 +78,7 @@ fileInput.addEventListener('change', (e) => {  //detecta cuando se sube un archi
       displayLength: 1500,
       classes: 'red lighten-1 rounded'
     });
-    
+
     fileInput.value = "";
   }
 });
@@ -82,7 +89,7 @@ function Subir_Buffer(file) {
 
   const file_r = new FileReader(); //Maneja el archivo para subirlo al buffer
 
-  file_r.readAsDataURL(file);     // Leer desde una ubicacion
+  file_r.readAsDataURL(file); // Leer desde una ubicacion
 
   file_r.onloadstart = (event) => {
     console.log("comenzando");
@@ -96,6 +103,7 @@ function Subir_Buffer(file) {
 
   }
 }
+/////////////////////////////////////////////
 
 //Envio Formulario, Subida de Archivo al SD
 var formulario = document.getElementById("form_datos");
@@ -103,7 +111,7 @@ var formulario = document.getElementById("form_datos");
 formulario.addEventListener('submit', (event) => {
   event.preventDefault();
 
-  if (fileInput.files.length == 0) {  //Si se intenta subir sin seleccionar archivo
+  if (fileInput.files.length == 0) { //Si se intenta subir sin seleccionar archivo
     M.toast({
       html: 'Selecciona un Archivo de Audio',
       displayLength: 1500,
@@ -114,10 +122,10 @@ formulario.addEventListener('submit', (event) => {
 
   //Mete los datos del archivo dentro del formulario
   var dataform = new FormData(formulario);
-  dataform.append('musica', fileInput.files[0]);   //Adjunta el archivo al formulario
+  dataform.append('musica', fileInput.files[0]); //Adjunta el archivo al formulario
 
 
-  //Peticion de envio AJAX -- Sube archivo de Audio a la SD
+  //////////Peticion de envio AJAX -- Sube archivo de Audio a la SD//////////////////////
   var xhr = new XMLHttpRequest();
 
   xhr.open('POST', '/subida');
@@ -131,10 +139,10 @@ formulario.addEventListener('submit', (event) => {
     progress.style.width = percent.toFixed(2) + "%"; //dibuja el porcentaje en la barra porpiedad "width"
   });
 
-  xhr.onload = () => {      //Archivo subido
+  xhr.onload = () => { //Archivo subido
     if (xhr.status === 200) {
-      document.getElementById('barra').className = 'hide';  //oculta barra de subida
-      fileInput.value = "";  //borra el campo de texto del file_input
+      document.getElementById('barra').className = 'hide'; //oculta barra de subida
+      fileInput.value = ""; //borra el campo de texto del file_input
       M.toast({
         html: 'Archivo Subido',
         displayLength: 1500,
@@ -152,3 +160,48 @@ formulario.addEventListener('submit', (event) => {
   }
   xhr.send(dataform);
 });
+//_____________________FIN AJAX___________________________
+////////////////////////////////////////////////////////
+
+/*
+//==================MANEJO CONEXIONES WEBSOCKET===================
+*/
+//____________CREACIÓN SOCKET DE CONEXIÓN__________________
+
+//Se ejecuta al crear una conexión
+function conexion_WS() {
+  conexionWs = new WebSocket('ws://' + location.hostname + '/ws', ['arduino']);
+
+  conexionWs.onopen = function () {
+    console.log("conexión abierta");
+  };
+
+  conexionWs.onerror = function (error) {
+    console.log("WebSocket Error", error);
+  };
+
+  conexionWs.onmessage = function (e) {
+    console.log("Server: ", e.data);
+  };
+
+  conexionWs.onclose = function () {
+    console.log("conexion Cerrada");
+  };
+}
+
+//Funcion de dexconexión del Socket
+function desconectar(){
+  conexionWs.close();
+}
+/*
+==============FIN FUNCIONES CONEXIÓN SOCKET=====================
+*/
+
+/*
+=================FUNCIONES ENVIO MENSAJES SOCKET==============================
+*/
+//Envia Mensaje para refrescar el listado de Archivos de la SD
+function PeticionRefrescoSD(){
+  var full_data = '{"REFRESH":' + 1 + '}';  //Prepara Envio mensaje en formato JSON
+  conexionWs.send(full_data);
+}

@@ -55,8 +55,21 @@
             <li><a href="collapsible.html"><i class="material-icons">refresh</i></a></li>
             <li><a href="mobile.html"><i class="material-icons">more_vert</i></a></li>
         </ul>
-
-        <!----------------------SUBIR   ARCHIVOS-->
+        
+        <!--BOTONES CONEXIÓN----------------------->
+        <div class="container section">
+            <div class="row">
+                <div class="btn waves-effect waves-light right purple lighten-3" id="conexionWs_on">ON
+                    <i class = "tiny material-icons">wifi</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="btn waves-effect waves-light right red lighten-1" id="conexionWs_off">OFF
+                    <i class = "tiny material-icons">signal_wifi_off</i>
+                </div>
+            </div>
+        </div>
+        <!----------------------SUBIR   ARCHIVOS----------------------------->
         <div class="container section">
             <div class="row">
                 <form action="" class="col s12" id="form_datos">
@@ -86,7 +99,7 @@
                 </form>
             </div>
             <!--BOTON REFRESCAR Y TRAER JSON ARCHIVOS SPIFFS-->
-            <button class="btn waves-effect waves-light" id="traer_texto">Archivos
+            <button class="btn waves-effect waves-light left" id="traer_json_SD">Archivos
                 <i class="material-icons right">refresh</i>
             </button>
             <!--TABLA REPRESENTACIÓN DE ARCHIVOS SD-->

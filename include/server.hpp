@@ -1,5 +1,5 @@
 //
-//Configuración SERVIDOR
+//____________CONFIGURACIÓN SERVIDOR//_______________________________
 
 File archivo;   //Utilizado para escribir en la SD los archivos que se envian
      
