@@ -55,20 +55,19 @@
             <li><a href="collapsible.html"><i class="material-icons">refresh</i></a></li>
             <li><a href="mobile.html"><i class="material-icons">more_vert</i></a></li>
         </ul>
-        
+
         <!--BOTONES CONEXIÓN----------------------->
         <div class="container section">
             <div class="row">
-                <div class="btn waves-effect waves-light right purple lighten-3" id="conexionWs_on">ON
-                    <i class = "tiny material-icons">wifi</i>
-                </div>
-            </div>
-            <div class="row">
-                <div class="btn waves-effect waves-light right red lighten-1" id="conexionWs_off">OFF
-                    <i class = "tiny material-icons">signal_wifi_off</i>
-                </div>
+                <a class="btn waves-effect waves-light  purple lighten-4" id="conexionWs_on">
+                    <i class="tiny material-icons">rss_feed</i>ON
+                </a>
+                <a class="btn disabled" id="conexionWs_off">
+                    <i class="tiny material-icons">signal_wifi_off</i>OFF
+                </a>
             </div>
         </div>
+
         <!----------------------SUBIR   ARCHIVOS----------------------------->
         <div class="container section">
             <div class="row">
@@ -80,10 +79,11 @@
                                 <input type="file" id="entrada">
                             </div>
                             <div class="file-path-wrapper">
-                                <input class="file-path validate" id="campoTexto" type="text" name="campoDatos"
+                                <input class="file-path validate" id="campoTexto" type="text"
                                     placeholder="Escoje un Archivo">
                             </div>
                         </div>
+
                         <!--BARRA DE PROGRESO-->
                         <div class="hide" id="barra">
                             <div class="progress" id="progressBar">
@@ -91,6 +91,7 @@
                             </div>
                         </div>
                         <br>
+
                         <!--BOTÓN SUBIDA ARCHIVOS-->
                         <button class="btn waves-effect waves-light right" type="submit" name="action">Subir
                             <i class="material-icons right">file_upload</i>
@@ -98,44 +99,45 @@
                     </div>
                 </form>
             </div>
-            <!--BOTON REFRESCAR Y TRAER JSON ARCHIVOS SPIFFS-->
-            <button class="btn waves-effect waves-light left" id="traer_json_SD">Archivos
-                <i class="material-icons right">refresh</i>
-            </button>
-            <!--TABLA REPRESENTACIÓN DE ARCHIVOS SD-->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Tamaño</th>
-                    </tr>
-                </thead>
-                <tbody id="response">
-
-                </tbody>
-            </table>
         </div>
-    </div>
+
+        <!--BOTON REFRESCAR Y TRAER JSON ARCHIVOS SPIFFS-->
+        <button class="btn waves-effect waves-light" id="traer_json_SD">Archivos
+            <i class="material-icons right">refresh</i>
+        </button>
+
+        <!--LISTA REPRESENTACIÓN DE ARCHIVOS SD-->
+        <div class="container section">
+            <div class="hide" id="lista">
+                <div class="row">
+                    <ul class="collection" id="response">
+                        
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
 
 
 
-    <!--SCRIPTS CONTROL Y FRAMEWORK-->
-    <script src="materialize.min.js"></script>
-    <script src="script.js"></script>
 
-    <!--Script de Carga de la Página-->
-    <script>
-        //Precarga de la web
-        window.addEventListener('load', () => {
-            document.getElementById('circulo').className = 'hide';
-            document.getElementById('contenido').className = 'center';
-        });
+        <!--SCRIPTS CONTROL Y FRAMEWORK-->
+        <script src="materialize.min.js"></script>
+        <script src="script.js"></script>
 
-        //Carga los elementos de javaScript de Materialize
-        document.addEventListener('DOMContentLoaded', function () {
-            M.AutoInit();
-        });
-    </script>
+        <!--Script de Carga de la Página-->
+        <script>
+            //Precarga de la web
+            window.addEventListener('load', () => {
+                document.getElementById('circulo').className = 'hide';
+                document.getElementById('contenido').className = 'center';
+            });
+
+            //Carga los elementos de javaScript de Materialize
+            document.addEventListener('DOMContentLoaded', function () {
+                M.AutoInit();
+            });
+        </script>
 </body>
 
 </html>

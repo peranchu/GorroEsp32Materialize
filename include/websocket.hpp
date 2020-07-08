@@ -6,6 +6,7 @@ AsyncWebSocket ws("/ws");  //Objeto AsyncWebSocket "ws" y ruta de escucha de las
 AsyncWebSocketClient *globalClient = NULL;
 
 bool RefreshEstado;
+String NombreBorrado;
 
 /*
 ========ANÁLISIS DE DATOS DE LAS CADENAS DE ENTRADA=======================================
@@ -18,11 +19,17 @@ void CadenaEntrada(String datosEntrada){
         Serial.println(error.c_str());
         return;
     }
-    RefreshEstado = doc["REFRESH"];  //Estado Botón Refresco de Datos SD
-    if(RefreshEstado){
-        explorar_ficheros();        //Refresca los ficheros de la SD
-        RefreshEstado = false;
-    } 
+    if(datosEntrada == "REFRESH"){
+        RefreshEstado = doc["REFRESH"];  //Estado Botón Refresco de Datos SD
+        if(RefreshEstado){
+            explorar_ficheros();        //Refresca los ficheros de la SD
+            RefreshEstado = false;
+        } 
+    }
+    if(datosEntrada == "ERASE"){
+        NombreBorrado = doc["ERASE"];
+    }
+    
 }
 
 //
