@@ -8,6 +8,7 @@
 #include <ArduinoJson.h>
 #include <Audio.h>
 
+//Ficheros de la carpeta include
 #include "config.h"
 #include "server.hpp"
 #include "Esp32_utils.hpp"

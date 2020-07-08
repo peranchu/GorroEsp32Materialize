@@ -5,41 +5,51 @@ AsyncWebSocket ws("/ws");  //Objeto AsyncWebSocket "ws" y ruta de escucha de las
 
 AsyncWebSocketClient *globalClient = NULL;
 
-bool RefreshEstado;
-const char* NombreBorrado;
+//variables generales
+bool RefreshEstado;         //Estado del botón de "refresh"
+const char* NombreBorrado;  //Alamcena el nombre del Fichero a borrar
+
+//===========================================================================
+
+
 
 /*
 ========ANÁLISIS DE DATOS DE LAS CADENAS DE ENTRADA=======================================
 */
 void CadenaEntrada(String datosEntrada){
-    Serial.println(datosEntrada);
-    DynamicJsonDocument doc(200);
+    //Serial.println(datosEntrada);
+    DynamicJsonDocument doc(200);   //creación del objeto JSON
+
     DeserializationError error = deserializeJson(doc, datosEntrada);
     if(error){
         Serial.print("Deserializacion JSON Fallida: ");
         Serial.println(error.c_str());
         return;
     }
-    
-    RefreshEstado = doc["REFRESH"];  //Estado Botón Refresco de Datos SD
+
+    //Mensaje de "refresh" de la lista
+    RefreshEstado = doc["REFRESH"];     //Estado Botón Refresco de Datos SD
     if(RefreshEstado){
-        explorar_ficheros();        //Refresca los ficheros de la SD
+        explorar_ficheros();            //Refresca los ficheros de la SD
         RefreshEstado = false;
-    } 
-    int posDelete = datosEntrada.indexOf("ERASE");
+    }
+
+    //Mensaje de Borrado de Archivos de la SD 
+    int posDelete = datosEntrada.indexOf("ERASE");  //Si la cadena coincide con el mensaje
     if(posDelete >=0){
         NombreBorrado = doc["ERASE"];
         BorradoArchivosSD(NombreBorrado);
         //Serial.print(NombreBorrado);
-    }
-        
-    
-   
-    
+    }    
 }
 
-//
+/*
+====================FIN ANÁLISIS CADENA DE ENTRADA=============================
+*/
+
+
 //___________ESCUCHA LOS EVENTOS DEL SOCKET//_______________________
+
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
                 AwsEventType type, void *arg, uint8_t *data, size_t len){
 
@@ -70,7 +80,9 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
         }
     }
 }
-
+/*
+================FIN ESCUCHA DE EVENTOS DEL SOCKET===========================
+*/
 
 
 //__________________INICIALIZACIÓN DEL SERVICIO DE SOCKETS//_______________________________

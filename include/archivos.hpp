@@ -7,6 +7,7 @@ File multi;                  //Ficheros multiples
 File single;                 //Ficheros simples
 File contador;               //Explorar Archivos tarjeta SD
 File directorios;            //Guardar nombres de archivos en JSON
+
 int numero_ficheros;         //Numero de archivos guardados en SD
 int total_ficheros = 0; 
 
@@ -26,26 +27,30 @@ int contador_archivos(){
     numero_ficheros ++;
   }
 }
-//////////////////////////////////////////
+//=================FIN CONTADOR ARCHIVOS SD=============================
 
-//Borra los ficheros de la targeta SD
+
+//==============BORRA FICHEROS TARJETA SD======================
 void BorradoArchivosSD(String nombre_borrar){
   SD.remove(nombre_borrar);
   Serial.println("");
   Serial.print("Archivo borrado: ");
   Serial.println(nombre_borrar);
 }
-//////////////////////////////////////////
+//==============FIN BORRADO ARCHIVOS SD=====================================
 
 
+/*
+==============EXPLORACIÓN DE LA TARJETA SD===================================
+*/
 //Explora los ficheros de la tarjeta SD
 void explorar_ficheros(){
-  numero_ficheros = contador_archivos(); //Cuenta el numero de archivos escritos en la SD
+  numero_ficheros = contador_archivos();  //Cuenta el numero de archivos escritos en la SD
   root = SD.open("/");
 
   SPIFFS.remove("/dir.json");     //Limpia el archivo para ser leido
 
-  //PREPARA La Memoria para EScribir
+  //Prepara La Memoria SPIFFS para Escribir
   directorios = SPIFFS.open("/dir.json", "a");
     if (!directorios) {
       Serial.println("No se pudo abrir el archivo");
@@ -56,10 +61,11 @@ void explorar_ficheros(){
     Serial.println("dentro_1");
     single = root.openNextFile();
 
+    //formatea el mensaje para JSON
     directorios.print("{\"titulo\":");
     directorios.printf("\"%s\"", single.name());
     directorios.print(",\"size\":");
-    directorios.printf("%3.2f", float((single.size()) / 1048576.0));
+    directorios.printf("%3.2f", float((single.size()) / 1048576.0)); //Convierte a Mb el tamaño del Archivo
     directorios.print("}");
 
     ///////////////DEPURACIÓN/////////////////////
@@ -83,11 +89,12 @@ void explorar_ficheros(){
     for(int i = 0; i < numero_ficheros - 1; i++){
     multi = root.openNextFile();
 
-    if(!multi){
+    if(!multi){      //si no hay más archivos...
       Serial.println("sin archivos");
       return;
     }
 
+    //Formatea mensaje para JSON
     directorios.print("{\"titulo\":");
     directorios.printf("\"%s\"", multi.name());
     directorios.print(",\"size\":");
@@ -124,4 +131,4 @@ void explorar_ficheros(){
   directorios.close(); 
   multi.close();
 }
-
+//==================FIN EXPLORACIÓN TARJETA SD==========================

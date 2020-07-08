@@ -6,32 +6,33 @@ File archivo;   //Utilizado para escribir en la SD los archivos que se envian
 
 AsyncWebServer server (80);     // INSTANCIA Y PUERTO SERVIDOR
 
-//Manejo de la carga de Archivos
+
+//===================MANEJO CARGA DE ARCHIVOS A LA SD===============================
+
+//Función llamada desde el botón de envío de Formulario
 void handleUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
   if(!index){
-    if(!filename.startsWith("/")) filename = "/" + filename;
+    if(!filename.startsWith("/")) filename = "/" + filename;  //coloca el caracter "/" al archivo para poder ser escrito en la SD 
     Serial.println("UploadStart: " + filename);
   
-    archivo = SD.open(filename, FILE_WRITE);
+    archivo = SD.open(filename, FILE_WRITE);     //prepara el archvio para ser escrito
   }
   if(len){
     Serial.println("escribiendo...");
-    archivo.write(data, len);
+    archivo.write(data, len);    //Escribe el archivo en la SD
   }
 
   if(final){
     Serial.println("UploadEnd: " + filename + "," + index + "," + len);
     archivo.close();
-    request->send(200, "text/plain", "Archivo Subido");
+    request->send(200, "text/plain", "Archivo Subido");  // Devuelve al cliente "OK"
   }
 }
-/////////////////////////////////////////////
+//========================FIN MANEJO CARGA DE ARCHIVOS A LA SD=================================
 
-
-
-void InitServer(){
 
 ///////////////ARCHIVOS SERVIDOS//////////////////////////////
+void InitServer(){
 
 //ARCHIVOS DEL FRAMEWORK MATERIALIZE
   server.on("/materialize.min.css", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -45,6 +46,7 @@ void InitServer(){
   server.on("/materialize.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/materialize.min.js", "text/javascript");
   });
+
 
 //ARCHIVOS DE LAS PETICIONES DEL CLIENTE///////////////////////////////
 server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -64,8 +66,12 @@ server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
   });
 
   server.on("/subida", HTTP_POST, [](AsyncWebServerRequest *request){  
-    request->send(200);}, handleUpload);
+    request->send(200);}, handleUpload);  // Manejo de las peticiones de subida de archivos al servidor
 
+
+
+  //Inicio Servidor
   server.begin();
   Serial.println("HTTP Server Iniciado");
 }
+//=========================FIN ARCHIVOS SERVIDOS=============================

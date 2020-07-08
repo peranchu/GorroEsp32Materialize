@@ -9,7 +9,8 @@ document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD)
 document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS); //Boton conexion ON
 document.querySelector('#conexionWs_off').addEventListener('click', desconectar); //Boton desconexion OFF
 
-//FIN ELEMENTOS INSTANCIACIÓN DOMM==========================================
+//====================FIN ELEMENTOS INSTANCIACIÓN DOMM=======================
+
 
 //Limpia el campo de Texto del Formulario de Subida 
 function limpiarCampoTexto() {
@@ -22,25 +23,27 @@ function limpiarFormSubida() {
 }
 
 
-//Lee el JSON del archivo en SPIFFS
-function traerJSON_SD() {
+//=============Lee el JSON del archivo en SPIFFS Y DIBUJA EN TABLA========================
+function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
 
-  PeticionRefrescoSD(); //Refresca la lista de archivos de la SD antes de leerlos
+  PeticionRefrescoSD();  //Refresca la lista de archivos de la SD antes de leerlos
+                        // Función dobre WebSocket
 
   //Empieza a leer el archvio JSON con los ficheros de la SD
   fetch('dir.json')
     .then(res => res.json())
     .then(content => {
 
+      //=========Cuando hay más de un Archivo en la SD=============================
       try {
-        //=========Cuando hay más de un Archivo en la SD=============================
+
         //Muestra los datos del JSON en la tabla
-        document.getElementById('lista').className = 'center'; //Muestra la lista cambia la propiedad hidden
+        document.getElementById('lista').className = 'center'; //Muestra la lista cambia la propiedad hide
 
         let res = document.querySelector('#response');
         res.innerHTML = '';
-        for (let item of content) {
-          //console.log(item.titulo);
+
+        for (let item of content) {  //Bucle rellena la tabla "Template String"
           res.innerHTML += `
           <li class="collection-item avatar">
             <a href="#!" class="sencondary-content"><i class="material-icons circle red">play_arrow</i></a>
@@ -52,15 +55,18 @@ function traerJSON_SD() {
           `
         }
       }
+
+      //=================Solo un Archivo en la SD==========================
       catch (e) {
-        //=================Solo un Archivo en la SD==========================00
+
         //Muestra los datos del JSON en la tabla
-        document.getElementById('lista').className = 'center'; //Muestra la lista cambia la propiedad hidden
+        document.getElementById('lista').className = 'center'; //Muestra la lista cambia la propiedad hide
 
         let res = document.querySelector('#response');
         res.innerHTML = '';
 
-        res.innerHTML = `
+        //"_____________Template String"________________
+        res.innerHTML = `  
           <li class="collection-item avatar">
             <a href="#!" class="sencondary-content"><i class="material-icons circle red">play_arrow</i></a>
             <span class="title">${content.titulo}</span>
@@ -71,13 +77,14 @@ function traerJSON_SD() {
           `
       }
     })
-    //Si no hay archivos borra la tabla
+
+    //===================Si no hay archivos borra la tabla=======================
     .catch(error => {
       console.log(error);
-      document.getElementById('lista').className = 'hide'; //Muestra la lista cambia la propiedad hidden
+      document.getElementById('lista').className = 'hide'; //Oculta la lista cambia la propiedad hide
     });
 }
-///////////////////////////////////////////
+//===========================FIN PINTADO DE TABLA========================================
 
 
 //////////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////
@@ -94,7 +101,7 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
     return Math.pow(2, 20) * mega;
   }
 
-  var extension = file.type.split('/').pop(); //Separa / y Elimina del tipo "type: audio/mpeg"
+  var extension = file.type.split('/').pop();   //Separa / y Elimina del tipo "type: audio/mpeg"
 
 
   if (extensiones_p.indexOf(extension) != -1) { //Si encuentra un archivo...
@@ -126,7 +133,7 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
 });
 /////////////////////////////////////////
 
-//Subir imagen al buffer de memoria
+//Subir Archivo al buffer de memoria
 function Subir_Buffer(file) {
 
   const file_r = new FileReader(); //Maneja el archivo para subirlo al buffer
@@ -140,19 +147,22 @@ function Subir_Buffer(file) {
   file_r.onloadend = (event) => {
     console.log("termino");
     console.log("Se cargó: " + event.loaded);
-
   }
   file_r.onload = (event) => {
 
   }
 }
-/////////////////////////////////////////////
+//=====================FIN SUBIR ARCHIVO A BUFFER========================
 
+
+/*
+==============ENVIO FORMULARIO CON EL ARCHIVO================================
+*/
 //Envio Formulario, Subida de Archivo al SD
 var formulario = document.getElementById("form_datos");
 
 formulario.addEventListener('submit', (event) => {
-  event.preventDefault();
+  event.preventDefault();    //previene las acciones comunes del formulario
 
   if (fileInput.files.length == 0) { //Si se intenta subir sin seleccionar archivo
     M.toast({
@@ -207,6 +217,8 @@ formulario.addEventListener('submit', (event) => {
 });
 //_____________________FIN AJAX___________________________
 ////////////////////////////////////////////////////////
+//==============FIN SUBIDA ARCHIVOS AL SD=================================
+
 
 /*
 //==================MANEJO CONEXIONES WEBSOCKET===================
@@ -253,6 +265,7 @@ function desconectar() {
 ==============FIN FUNCIONES CONEXIÓN SOCKET=====================
 */
 
+
 /*
 =================FUNCIONES ENVIO MENSAJES SOCKET==============================
 */
@@ -273,7 +286,7 @@ function BorrarDatos(nombreFichero) {
   };
 
   var envioDelete = JSON.stringify(objetoJS); //convierte el objeto JavaScript en JSON para enviarlo
-  console.log(envioDelete);
+  //console.log(envioDelete);
   conexionWs.send(envioDelete);
 }
-////////////////////////////////////////////////
+//======================FIN BORRADO ARCHIVOS SD==============================
