@@ -6,12 +6,13 @@ AsyncWebSocket ws("/ws");  //Objeto AsyncWebSocket "ws" y ruta de escucha de las
 AsyncWebSocketClient *globalClient = NULL;
 
 bool RefreshEstado;
-String NombreBorrado;
+const char* NombreBorrado;
 
 /*
 ========ANÁLISIS DE DATOS DE LAS CADENAS DE ENTRADA=======================================
 */
 void CadenaEntrada(String datosEntrada){
+    Serial.println(datosEntrada);
     DynamicJsonDocument doc(200);
     DeserializationError error = deserializeJson(doc, datosEntrada);
     if(error){
@@ -19,16 +20,21 @@ void CadenaEntrada(String datosEntrada){
         Serial.println(error.c_str());
         return;
     }
-    if(datosEntrada == "REFRESH"){
-        RefreshEstado = doc["REFRESH"];  //Estado Botón Refresco de Datos SD
-        if(RefreshEstado){
-            explorar_ficheros();        //Refresca los ficheros de la SD
-            RefreshEstado = false;
-        } 
-    }
-    if(datosEntrada == "ERASE"){
+    
+    RefreshEstado = doc["REFRESH"];  //Estado Botón Refresco de Datos SD
+    if(RefreshEstado){
+        explorar_ficheros();        //Refresca los ficheros de la SD
+        RefreshEstado = false;
+    } 
+    int posDelete = datosEntrada.indexOf("ERASE");
+    if(posDelete >=0){
         NombreBorrado = doc["ERASE"];
+        BorradoArchivosSD(NombreBorrado);
+        //Serial.print(NombreBorrado);
     }
+        
+    
+   
     
 }
 

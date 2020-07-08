@@ -1,3 +1,4 @@
+
 //
 //////////////MANEJO DE ARCHIVOS EN LA SD //////////////////////////
 
@@ -27,6 +28,16 @@ int contador_archivos(){
 }
 //////////////////////////////////////////
 
+//Borra los ficheros de la targeta SD
+void BorradoArchivosSD(String nombre_borrar){
+  SD.remove(nombre_borrar);
+  Serial.println("");
+  Serial.print("Archivo borrado: ");
+  Serial.println(nombre_borrar);
+}
+//////////////////////////////////////////
+
+
 //Explora los ficheros de la tarjeta SD
 void explorar_ficheros(){
   numero_ficheros = contador_archivos(); //Cuenta el numero de archivos escritos en la SD
@@ -46,16 +57,16 @@ void explorar_ficheros(){
     single = root.openNextFile();
 
     directorios.print("{\"titulo\":");
-    directorios.printf("\"%s\"", multi.name());
+    directorios.printf("\"%s\"", single.name());
     directorios.print(",\"size\":");
-    directorios.printf("%3.2f", float((multi.size()) / 1048576.0));
+    directorios.printf("%3.2f", float((single.size()) / 1048576.0));
     directorios.print("}");
 
     ///////////////DEPURACIÓN/////////////////////
     Serial.print("{\"titulo\":");
-    Serial.printf("\"%s\"", multi.name());
+    Serial.printf("\"%s\"", single.name());
     Serial.print(",\"size\":");
-    Serial.printf("%3.2f", float((multi.size()) / 1048576.0));
+    Serial.printf("%3.2f", float((single.size()) / 1048576.0));
     Serial.print("}");
     
     single.close();
@@ -113,3 +124,4 @@ void explorar_ficheros(){
   directorios.close(); 
   multi.close();
 }
+
