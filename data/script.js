@@ -9,6 +9,7 @@ document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD)
 document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS); //Boton conexion ON
 document.querySelector('#conexionWs_off').addEventListener('click', desconectar); //Boton desconexion OFF
 document.querySelector('#BtnStop').addEventListener('click', StopSD);             //Botón STOP 
+document.getElementById('volumen').addEventListener('change', envioVolumen);      //Slider Volumen
 //====================FIN ELEMENTOS INSTANCIACIÓN DOMM=======================
 
 
@@ -63,6 +64,7 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
           `
         }
         document.getElementById('stop').className = 'center';
+        document.getElementById('volumen').className = 'center';
       }
 
       //=================Solo un Archivo en la SD==========================
@@ -86,6 +88,7 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
           `
       }
       document.getElementById('stop').className = 'center';
+      document.getElementById('volumen').className = 'center';
     })
 
     //===================Si no hay archivos borra la tabla=======================
@@ -318,14 +321,27 @@ function ReproducirSD(nombreFile){
   var envioPlay = JSON.stringify(objetoJS_repro);
   console.log(envioPlay);
   conexionWs.send(envioPlay);  //Envio...
+  document.getElementById('nombreArchivoRepro').innerHTML = `<h7>${nombreFile}</h7>`
 }
 //===============FIN REPRODUCIR ARCHIVOS SD=================================
 
+
+/*
+=======================CONTROL VOLUMEN SD====================================
+*/
+function envioVolumen(){
+  const volumenSD = document.querySelector('#vol').value; //Recoje el Volumen del Slider
+  console.log(volumenSD);
+  var envioVolumenSD = '{"VOL":' + volumenSD + '}';
+ 
+  conexionWs.send(envioVolumenSD);
+}
 
 //========================BOTON STOP SD=======================================
 function StopSD(){
   var SD_stop = '{"STOP":' + 1 + '}';
   conexionWs.send(SD_stop);
+  document.getElementById('nombreArchivoRepro').innerHTML = '';
 }
 
 

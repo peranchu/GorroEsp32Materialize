@@ -62,7 +62,12 @@ void setup() {
 void loop() {
   audio.loop();
 
+  if(volumenActual != volumenAnterior){
+    audio.setVolume(volumenActual);
+    volumenAnterior = volumenActual;
+  }
 }
+
 
 
 

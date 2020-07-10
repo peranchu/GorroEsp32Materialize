@@ -18,6 +18,14 @@ void audioConfig(){
 }
 
 
+//=============================VOLUMEN SD======================================
+int GetVolume(int volumen){
+    Serial.println(volumen);
+    return volumen;
+}
+//===============================FIN VOLUMEN SD====================================
+
+
 //====================REPRODUCIR ARCHIVOS TARJETA SD============================
 void PlayFilesSD(String PlayFile){
     Serial.println("DentroAudio");

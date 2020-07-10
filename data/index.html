@@ -135,14 +135,39 @@
 
 
 
-        <!--------------------------BOTON STOP---------------------------------->
+        <!--------------------------BOTON STOP ------------------------------->
         <div class="contaniner section">
-            <div class="hide" id="stop">
-                <div class="row">
-                    <a class="waves-effect waves-light btn-large" id="BtnStop"><i class="material-icons left">stop</i>STOP</a>
+            <div class="row">
+                <div class="hide" id="stop">
+                    <div class="col s12">
+                        <a class="waves-effect waves-light btn-large" id="BtnStop"><i
+                                class="material-icons left">stop</i>STOP</a>
+                    </div>
+                    <p id="nombreArchivoRepro"></p>
                 </div>
             </div>
         </div>
+
+
+        <!-----------------------SLIDER VOLUMEN----------------------------------->
+        <div class="container section">
+            <div class="row">
+                <div class="hide" id="volumen">
+                    <div class="col s8 offset-s2">
+                        <div class="section right">
+                            <h8>Volumen</h8>
+                        </div>
+                        <form>
+                            <p class="range-field">
+                            <input type="range" id="vol" min="0" max="21" value="10" />
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
 
 
         <!------------------SCRIPTS CONTROL Y FRAMEWORK-------------------------------------->
