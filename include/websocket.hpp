@@ -8,6 +8,7 @@ AsyncWebSocketClient *globalClient = NULL;
 //variables generales
 bool RefreshEstado;         //Estado del botón de "refresh"
 const char* NombreBorrado;  //Alamcena el nombre del Fichero a borrar
+const char* ArchivoPlay;    //Almacena el archivo a reproducir de la SD
 
 //===========================================================================
 
@@ -40,7 +41,15 @@ void CadenaEntrada(String datosEntrada){
         NombreBorrado = doc["ERASE"];
         BorradoArchivosSD(NombreBorrado);
         //Serial.print(NombreBorrado);
-    }    
+    } 
+
+    //Mensaje de Reproduccion de Archivo de la SD
+    int posPlay = datosEntrada.indexOf("PLAY");  //Si la cadena coincide con el mensaje...
+    if(posPlay >=0){
+        ArchivoPlay = doc["PLAY"];
+        Serial.println(ArchivoPlay);
+        PlayFilesSD(ArchivoPlay);
+    }   
 }
 
 /*

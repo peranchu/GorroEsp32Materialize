@@ -12,6 +12,10 @@ document.querySelector('#conexionWs_off').addEventListener('click', desconectar)
 //====================FIN ELEMENTOS INSTANCIACIÓN DOMM=======================
 
 
+
+/*
+=============FUNCIONES RELACIONADAS CON EL FORMULARIO=================================
+*/
 //Limpia el campo de Texto del Formulario de Subida 
 function limpiarCampoTexto() {
   document.getElementById("campoTexto").value = "";
@@ -21,13 +25,17 @@ function limpiarCampoTexto() {
 function limpiarFormSubida() {
   document.getElementById('form_datos').reset();
 }
+//=======================FIN FUNCIONES DE FORMULARIO===============================
 
 
-//=============Lee el JSON del archivo en SPIFFS Y DIBUJA EN TABLA========================
+
+/*
+================LEE EL JSON DEL ARCHIVO SPIFFS Y DIBUJA EN TABLA========================
+*/
 function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
 
-  PeticionRefrescoSD();  //Refresca la lista de archivos de la SD antes de leerlos
-                        // Función dobre WebSocket
+  PeticionRefrescoSD();   //Refresca la lista de archivos de la SD antes de leerlos
+                          // Función dobre WebSocket
 
   //Empieza a leer el archvio JSON con los ficheros de la SD
   fetch('dir.json')
@@ -46,7 +54,7 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
         for (let item of content) {  //Bucle rellena la tabla "Template String"
           res.innerHTML += `
           <li class="collection-item avatar">
-            <a href="#!" class="sencondary-content"><i class="material-icons circle red">play_arrow</i></a>
+            <a href="javascript: ReproducirSD('${item.titulo}')" class="sencondary-content"><i class="material-icons circle red">play_arrow</i></a>
             <span class="title">${item.titulo}</span>
             <p>${item.size} Mb<br>
             </p>
@@ -68,7 +76,7 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
         //"_____________Template String"________________
         res.innerHTML = `  
           <li class="collection-item avatar">
-            <a href="#!" class="sencondary-content"><i class="material-icons circle red">play_arrow</i></a>
+            <a href="javascript: ReproducirSD('${content.titulo}')" class="sencondary-content"><i class="material-icons circle red">play_arrow</i></a>
             <span class="title">${content.titulo}</span>
             <p>${content.size} Mb<br>
             </p>
@@ -87,7 +95,10 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
 //===========================FIN PINTADO DE TABLA========================================
 
 
-//////////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////
+
+/*
+///////////////////SUBIDA ARCHIVOS AL SD ////////////////////////////////
+*/
 
 //Validaciones Subida Archivo al SD
 fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archivo
@@ -104,14 +115,14 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
   var extension = file.type.split('/').pop();   //Separa / y Elimina del tipo "type: audio/mpeg"
 
 
-  if (extensiones_p.indexOf(extension) != -1) { //Si encuentra un archivo...
+  if (extensiones_p.indexOf(extension) != -1) { //Si encuentra un archivo con las extensiones admitidas...
     console.log('encontrado: ' + extension + ' ' + file.size);
 
     if (file.size < tamano_p(5)) { //Si su tamaño...
 
       Subir_Buffer(file); //Sube la imagen
 
-    } else {
+    }else {
       M.toast({ //Avisos de ALERTA
         html: 'Archivo demasiado Grande',
         displayLength: 1500,
@@ -119,8 +130,10 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
       });
 
       limpiarCampoTexto();
+      limpiarFormSubida();
     }
-  } else {
+
+  }else {
     M.toast({
       html: 'Archivo incorrecto: ' + extensiones_p.toString(),
       displayLength: 1500,
@@ -131,14 +144,17 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
     limpiarFormSubida();
   }
 });
-/////////////////////////////////////////
+//=============================FIN SUBIDA ARCHIVOS AL SD==================================
 
-//Subir Archivo al buffer de memoria
+
+
+
+//==================SUBIR ARCHIVO BUFFER DE MEMORIA========================
 function Subir_Buffer(file) {
 
-  const file_r = new FileReader(); //Maneja el archivo para subirlo al buffer
+  const file_r = new FileReader(); //Maneja el archivo para subirlo al buffer, lee sus propiedades
 
-  file_r.readAsDataURL(file); // Leer desde una ubicacion
+  file_r.readAsDataURL(file);     // Leer desde una ubicacion
 
   file_r.onloadstart = (event) => {
     console.log("comenzando");
@@ -153,6 +169,7 @@ function Subir_Buffer(file) {
   }
 }
 //=====================FIN SUBIR ARCHIVO A BUFFER========================
+
 
 
 /*
@@ -178,7 +195,7 @@ formulario.addEventListener('submit', (event) => {
   dataform.append('musica', fileInput.files[0]); //Adjunta el archivo al formulario
 
 
-  //////////Peticion de envio AJAX -- Sube archivo de Audio a la SD//////////////////////
+  //////////__Peticion de envio AJAX -- Sube archivo de Audio a la SD__//////////////////////
   var xhr = new XMLHttpRequest();
 
   xhr.open('POST', '/subida');
@@ -216,8 +233,10 @@ formulario.addEventListener('submit', (event) => {
   xhr.send(dataform);
 });
 //_____________________FIN AJAX___________________________
-////////////////////////////////////////////////////////
+//
 //==============FIN SUBIDA ARCHIVOS AL SD=================================
+
+
 
 
 /*
@@ -231,6 +250,7 @@ function conexion_WS() {
 
   conexionWs.onopen = function () {
     console.log("conexión abierta");
+
     //Cambio estado de color botones de conexión
     document.getElementById('conexionWs_off').className = 'btn waves-effect waves-light red lighten-1';
     document.getElementById('conexionWs_on').className = 'btn waves-effect waves-light purple lighten-1';
@@ -251,11 +271,13 @@ function conexion_WS() {
 
   conexionWs.onclose = function () {
     console.log("conexion Cerrada");
+
     //Cambio Estado de color Botones Conexión
     document.getElementById('conexionWs_off').className = 'btn disabled';
     document.getElementById('conexionWs_on').className = 'btn waves-effect waves-light purple lighten-4';
   };
 }
+
 
 //Funcion de dexconexión del Socket
 function desconectar() {
@@ -266,6 +288,8 @@ function desconectar() {
 */
 
 
+
+
 /*
 =================FUNCIONES ENVIO MENSAJES SOCKET==============================
 */
@@ -274,6 +298,27 @@ function PeticionRefrescoSD() {
   var full_data = '{"REFRESH":' + 1 + '}'; //Prepara Envio mensaje en formato JSON
   conexionWs.send(full_data); //Envía los datos
 }
+//===============FIN REFRESCO SD=========================================
+
+
+
+/*
+===================REPRODUCE ARCHIVOS DE LA SD ==============================
+*/
+//parámetros pasados desde el "href" del icono play
+function ReproducirSD(nombreFile){
+  //Crea un objeto para almacenar el nombre del fichero a reproducir
+  var objetoJS_repro = {
+    PLAY: nombreFile
+  };
+
+  //convierte el objeto javascript en JSON
+  var envioPlay = JSON.stringify(objetoJS_repro);
+  console.log(envioPlay);
+  conexionWs.send(envioPlay);  //Envio...
+}
+//===============FIN REPRODUCIR ARCHIVOS SD=================================
+
 
 
 /*========BORRA LOS FICHEROS DE LA SD==========================

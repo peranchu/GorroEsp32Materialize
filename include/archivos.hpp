@@ -1,6 +1,7 @@
 
-//
+/*
 //////////////MANEJO DE ARCHIVOS EN LA SD //////////////////////////
+*/
 
 File root;                   //Accede a la raiz de la tarjeta SD
 File multi;                  //Ficheros multiples
@@ -38,6 +39,7 @@ void BorradoArchivosSD(String nombre_borrar){
   Serial.println(nombre_borrar);
 }
 //==============FIN BORRADO ARCHIVOS SD=====================================
+
 
 
 /*
