@@ -8,7 +8,7 @@ var progress = document.getElementById('relleno'); //instancia a barra de progre
 document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD); //Boton para cargar los archivos en SD
 document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS); //Boton conexion ON
 document.querySelector('#conexionWs_off').addEventListener('click', desconectar); //Boton desconexion OFF
-
+document.querySelector('#BtnStop').addEventListener('click', StopSD);             //Botón STOP 
 //====================FIN ELEMENTOS INSTANCIACIÓN DOMM=======================
 
 
@@ -62,6 +62,7 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
           </li> 
           `
         }
+        document.getElementById('stop').className = 'center';
       }
 
       //=================Solo un Archivo en la SD==========================
@@ -84,6 +85,7 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
           </li> 
           `
       }
+      document.getElementById('stop').className = 'center';
     })
 
     //===================Si no hay archivos borra la tabla=======================
@@ -319,6 +321,12 @@ function ReproducirSD(nombreFile){
 }
 //===============FIN REPRODUCIR ARCHIVOS SD=================================
 
+
+//========================BOTON STOP SD=======================================
+function StopSD(){
+  var SD_stop = '{"STOP":' + 1 + '}';
+  conexionWs.send(SD_stop);
+}
 
 
 /*========BORRA LOS FICHEROS DE LA SD==========================

@@ -3,6 +3,8 @@
 */
 Audio audio;  // Instancia del objeto Audio
 
+bool estado;
+
 ////////////PINES AUDIO MAX98357A/////////////////////////////
 #define I2S_DOUT 25   //DIN
 #define I2S_BCLK 27   //Bit Clock
@@ -19,6 +21,12 @@ void audioConfig(){
 //====================REPRODUCIR ARCHIVOS TARJETA SD============================
 void PlayFilesSD(String PlayFile){
     Serial.println("DentroAudio");
-  audio.connecttoFS(SD, PlayFile);
+    audio.connecttoFS(SD, PlayFile);
+    estado = true;
 }
 //========================FIN REPRODUCTOR ARCHIVOS SD=========================
+
+//========================STOP SD REPRODUCTOR================================
+void Stop_Reproductor(){
+    audio.stopSong();
+}

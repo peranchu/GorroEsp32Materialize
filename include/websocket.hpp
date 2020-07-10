@@ -7,10 +7,12 @@ AsyncWebSocketClient *globalClient = NULL;
 
 //variables generales
 bool RefreshEstado;         //Estado del botón de "refresh"
+bool Stop_SD_Card;
 const char* NombreBorrado;  //Alamcena el nombre del Fichero a borrar
 const char* ArchivoPlay;    //Almacena el archivo a reproducir de la SD
 
 //===========================================================================
+
 
 
 
@@ -49,6 +51,14 @@ void CadenaEntrada(String datosEntrada){
         ArchivoPlay = doc["PLAY"];
         Serial.println(ArchivoPlay);
         PlayFilesSD(ArchivoPlay);
+    }
+
+    //Mensaje de STOP del Archivo SD
+    int Stop_SD = datosEntrada.indexOf("STOP");
+    if(Stop_SD >=0){
+        Stop_SD_Card = doc["STOP"];
+        Serial.println(Stop_SD_Card);
+        Stop_Reproductor();
     }   
 }
 
