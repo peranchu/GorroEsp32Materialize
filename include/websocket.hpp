@@ -17,6 +17,24 @@ const char* ArchivoPlay;    //Almacena el archivo a reproducir de la SD
 //===========================================================================
 
 
+//Envio Petición Inicial de estado de conexión
+void EnvioInicial(){
+    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+        StaticJsonDocument<300> Jsondoc;
+
+        String response;
+        Jsondoc["estado"] = WiFi.status();
+        Jsondoc["IP"] = WiFi.localIP().toString();
+        serializeJson(Jsondoc, response);
+
+        globalClient->text(response);
+    }
+}
+///////////////////////////////////////////////////////////////
+
+
+
+
 /*
 ========ANÁLISIS DE DATOS DE LAS CADENAS DE ENTRADA=======================================
 */
@@ -67,7 +85,7 @@ void CadenaEntrada(String datosEntrada){
     if(Volumen_SD >=0){
         Volumen = doc["VOL"];
         volumenActual = GetVolume(Volumen);
-    }   
+    } 
 }
 
 /*
@@ -84,6 +102,8 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
         Serial.println("");
         Serial.println("Conexión Cliente al WebSocket Recibida");
         globalClient = client;
+
+        EnvioInicial();   //Envio del estado de la conexión al cliente
 
     }else if(type == WS_EVT_DISCONNECT){
         Serial.println("");

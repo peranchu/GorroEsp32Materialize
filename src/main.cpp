@@ -54,8 +54,6 @@ void setup() {
 
   audioConfig();          //CONFIGURACIÓN SISTEMA DE AUDIO
 
-  //explorar_ficheros();    //PRIMERA EXPLORACIÓN ARCHIVOS SD
-
 }
 
 
@@ -65,6 +63,7 @@ void loop() {
   if(volumenActual != volumenAnterior){
     audio.setVolume(volumenActual);
     volumenAnterior = volumenActual;
+    Serial.println(volumenActual);
   }
 }
 

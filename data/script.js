@@ -3,8 +3,8 @@
 /*
 ============================INSTACIACIÓN ELEMENTOS DEL DOMM=================================
 */
-const fileInput = document.getElementById('entrada'); //instancia a File_in en HTML
-var progress = document.getElementById('relleno'); //instancia a barra de progreso HTML
+const fileInput = document.getElementById('entrada');                             //instancia a File_in en HTML
+var progress = document.getElementById('relleno');                                //instancia a barra de progreso HTML
 document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD); //Boton para cargar los archivos en SD
 document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS); //Boton conexion ON
 document.querySelector('#conexionWs_off').addEventListener('click', desconectar); //Boton desconexion OFF
@@ -255,6 +255,11 @@ function conexion_WS() {
 
   conexionWs.onopen = function () {
     console.log("conexión abierta");
+    M.toast({
+      html: 'Conexión Abierta',
+      displayLength: 2500,
+      classes: "purple lighten-3 rounded"
+    });
 
     //Cambio estado de color botones de conexión
     document.getElementById('conexionWs_off').className = 'btn waves-effect waves-light red lighten-1';
@@ -270,12 +275,32 @@ function conexion_WS() {
     });
   };
 
-  conexionWs.onmessage = function (e) {
-    console.log("Server: ", e.data);
+  conexionWs.onmessage = function (event) {
+    console.log("Server: ", event.data);
+
+    var datosINServidor = event.data;
+    var dataJson = JSON.parse(datosINServidor);
+
+    var Estado = dataJson.estado;
+    var ip = dataJson.IP;
+
+    if(Estado === 3){
+      console.log("conectado");
+      console.log(ip);
+      document.getElementById('conex').innerHTML= `<h5>Conectado IP: ${ip}</h5>`
+    }
+
   };
 
   conexionWs.onclose = function () {
     console.log("conexion Cerrada");
+    M.toast({
+      html: 'Conexión Cerrada',
+      displayLength: 2500,
+      classes: "red lighten-1 rounded"
+    });
+
+    document.getElementById('conex').innerHTML= '';
 
     //Cambio Estado de color Botones Conexión
     document.getElementById('conexionWs_off').className = 'btn disabled';
@@ -359,3 +384,8 @@ function BorrarDatos(nombreFichero) {
   conexionWs.send(envioDelete);
 }
 //======================FIN BORRADO ARCHIVOS SD==============================
+
+
+/*
+=========================PETICIONES DATOS AL SERVIDOR==================================
+*/
