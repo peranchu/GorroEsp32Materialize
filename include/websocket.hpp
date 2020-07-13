@@ -27,6 +27,7 @@ void EnvioInicial(){
         String response;
         Jsondoc["estado"] = WiFi.status();
         Jsondoc["IP"] = WiFi.localIP().toString();
+        Jsondoc["MDNS"] = hostname;
         serializeJson(Jsondoc, response);
 
         globalClient->text(response);

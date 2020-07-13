@@ -3,13 +3,13 @@
 /*
 ============================INSTACIACIÓN ELEMENTOS DEL DOMM=================================
 */
-const fileInput = document.getElementById('entrada'); //instancia a File_in en HTML
-var progress = document.getElementById('relleno'); //instancia a barra de progreso HTML
-document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD); //Boton para cargar los archivos en SD
-document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS); //Boton conexion ON
-document.querySelector('#conexionWs_off').addEventListener('click', desconectar); //Boton desconexion OFF
-document.querySelector('#BtnStop').addEventListener('click', StopSD); //Botón STOP 
-document.getElementById('volumen').addEventListener('change', envioVolumen); //Slider Volumen
+const fileInput = document.getElementById('entrada');                              //instancia a File_in en HTML
+var progress = document.getElementById('relleno');                                 //instancia a barra de progreso HTML
+document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD);  //Boton para cargar los archivos en SD
+document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS);   //Boton conexion ON
+document.querySelector('#conexionWs_off').addEventListener('click', desconectar);  //Boton desconexion OFF
+document.querySelector('#BtnStop').addEventListener('click', StopSD);             //Botón STOP 
+document.getElementById('volumen').addEventListener('change', envioVolumen);      //Slider Volumen
 //====================FIN ELEMENTOS INSTANCIACIÓN DOMM=======================
 
 
@@ -283,14 +283,13 @@ function conexion_WS() {
 
     //Datos sobre estado de conexión recibidos desde el Servidor
     if ("estado" in dataJson) {
-      EstadoConexion();
+      EstadoConexion();        //Recibe los parametros de estado e IP de la conexión
     }
 
     //Datos del estado de Reproducción recibidos desde el Servidor
     if("EREPRO" in dataJson){
-      EstadoReproduccion();
+      EstadoReproduccion();    //Recive el estado de reproducción de la SD
     }
-
   };
 
   conexionWs.onclose = function () {
@@ -369,6 +368,8 @@ function StopSD() {
   conexionWs.send(SD_stop);
   document.getElementById('nombreArchivoRepro').innerHTML = '';
 }
+////////////////////FIN BOTON STOP SD///////////////////////////////////
+
 
 
 /*========BORRA LOS FICHEROS DE LA SD==========================
@@ -387,6 +388,8 @@ function BorrarDatos(nombreFichero) {
 //======================FIN BORRADO ARCHIVOS SD==============================
 
 
+
+
 /*
 =========================PETICIONES DATOS AL SERVIDOR==================================
 */
@@ -394,11 +397,15 @@ function BorrarDatos(nombreFichero) {
 function EstadoConexion() {
   var Estado = dataJson.estado;
   var ip = dataJson.IP;
+  var hostname = dataJson.MDNS;
 
   if (Estado === 3) {
     console.log("conectado");
     console.log(ip);
-    document.getElementById('conex').innerHTML = `<h5>Conectado IP: ${ip}</h5>`
+    document.getElementById('conex').innerHTML = `<h6>Conectado a: 
+                                                  ${hostname}</h6>
+                                                  <p>IP: ${ip}</p>
+                                                  `
   }
 }
 //////////////////////FIN ESTADO CONEXIÓN//////////////////////////////
@@ -407,5 +414,5 @@ function EstadoConexion() {
 function EstadoReproduccion(){
   var EstadoRepro = dataJson.EREPRO;
   console.log(EstadoRepro);
-  document.getElementById('nombreArchivoRepro').innerHTML= '';
+  document.getElementById('nombreArchivoRepro').innerHTML= '';  //Borra de pantalla el archivo en reproducción
 }

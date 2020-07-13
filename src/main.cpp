@@ -47,7 +47,7 @@ void setup() {
   }
   /////////////////////////////////////
 
-  ConnectWiFi_STA();         //INICIA CONEXIÓN WiFi
+  ConnectWiFi_STA();         //INICIA CONEXIÓN WiFi y MDNS
 
   InitWebSocket();          //INICIA LOS SERVICIOS WEBSOCKET
 
