@@ -49,7 +49,7 @@ void InitServer(){
 
 
 //ARCHIVOS DE LAS PETICIONES DEL CLIENTE///////////////////////////////
-server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/favicon.png", "image/png");
   });
 
@@ -57,7 +57,7 @@ server.on("/favicon.ico", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
   });
 
-server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/script.js", "text/javascript");
   });
 
@@ -68,6 +68,10 @@ server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
   server.on("/subida", HTTP_POST, [](AsyncWebServerRequest *request){  
     request->send(200);}, handleUpload);  // Manejo de las peticiones de subida de archivos al servidor
 
+
+  server.onNotFound([](AsyncWebServerRequest *request){
+    request->send(400, "text/plain", "Not found");
+  });
 
 
   //Inicio Servidor

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <ESPmDNS.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
 #include <FS.h>
@@ -18,8 +19,8 @@
 
 /////////////////////////////////////////
 
-
-bool SD_present;   //Almacena Si la SD Está Presente
+bool EstadoReproActual;     //Estado de la Reproducción de la SD
+bool SD_present;            //Almacena Si la SD Está Presente
 
 
 void setup() {
@@ -64,6 +65,15 @@ void loop() {
     audio.setVolume(volumenActual);
     volumenAnterior = volumenActual;
     Serial.println(volumenActual);
+  }
+
+  if (audio.isRunning() == 1 && EstadoReproActual == false){
+    EstadoReproActual = true;
+  }
+
+  if(audio.isRunning() == 0 && EstadoReproActual == true){
+    EstadoReproActual = false;
+    EstadoRepro();   //Envía el estado de reproducción al cliente
   }
 }
 

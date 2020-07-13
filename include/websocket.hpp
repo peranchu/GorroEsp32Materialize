@@ -16,7 +16,9 @@ const char* ArchivoPlay;    //Almacena el archivo a reproducir de la SD
 
 //===========================================================================
 
-
+/*
+=========================ENVIO DATOS DESDE EL SERVIDOR AL CLIENTE===================
+*/
 //Envio Petición Inicial de estado de conexión
 void EnvioInicial(){
     if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
@@ -30,8 +32,21 @@ void EnvioInicial(){
         globalClient->text(response);
     }
 }
-///////////////////////////////////////////////////////////////
+////////////////FIN PETICIÓN ESTADO DE CONEXIÓN//////////////////////////////////////////////
 
+
+//Envío Estado de Reproducción de la SD
+void EstadoRepro(){
+    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
+        StaticJsonDocument<200> JsonErepro;
+
+        String EstaRepro;
+        JsonErepro["EREPRO"] = audio.isRunning();
+        serializeJson(JsonErepro, EstaRepro);
+
+        globalClient->text(EstaRepro);
+    }
+}
 
 
 

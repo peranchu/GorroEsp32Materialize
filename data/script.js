@@ -3,13 +3,13 @@
 /*
 ============================INSTACIACIÓN ELEMENTOS DEL DOMM=================================
 */
-const fileInput = document.getElementById('entrada');                             //instancia a File_in en HTML
-var progress = document.getElementById('relleno');                                //instancia a barra de progreso HTML
+const fileInput = document.getElementById('entrada'); //instancia a File_in en HTML
+var progress = document.getElementById('relleno'); //instancia a barra de progreso HTML
 document.querySelector('#traer_json_SD').addEventListener('click', traerJSON_SD); //Boton para cargar los archivos en SD
 document.querySelector('#conexionWs_on').addEventListener('click', conexion_WS); //Boton conexion ON
 document.querySelector('#conexionWs_off').addEventListener('click', desconectar); //Boton desconexion OFF
-document.querySelector('#BtnStop').addEventListener('click', StopSD);             //Botón STOP 
-document.getElementById('volumen').addEventListener('change', envioVolumen);      //Slider Volumen
+document.querySelector('#BtnStop').addEventListener('click', StopSD); //Botón STOP 
+document.getElementById('volumen').addEventListener('change', envioVolumen); //Slider Volumen
 //====================FIN ELEMENTOS INSTANCIACIÓN DOMM=======================
 
 
@@ -33,10 +33,10 @@ function limpiarFormSubida() {
 /*
 ================LEE EL JSON DEL ARCHIVO SPIFFS Y DIBUJA EN TABLA========================
 */
-function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
+function traerJSON_SD() { //Reacciona al evento del botón "REFRESH"
 
-  PeticionRefrescoSD();   //Refresca la lista de archivos de la SD antes de leerlos
-                          // Función dobre WebSocket
+  PeticionRefrescoSD(); //Refresca la lista de archivos de la SD antes de leerlos
+  // Función dobre WebSocket
 
   //Empieza a leer el archvio JSON con los ficheros de la SD
   fetch('dir.json')
@@ -52,7 +52,7 @@ function traerJSON_SD() {  //Reacciona al evento del botón "REFRESH"
         let res = document.querySelector('#response');
         res.innerHTML = '';
 
-        for (let item of content) {  //Bucle rellena la tabla "Template String"
+        for (let item of content) { //Bucle rellena la tabla "Template String"
           res.innerHTML += `
           <li class="collection-item avatar">
             <a href="javascript: ReproducirSD('${item.titulo}')" class="sencondary-content"><i class="material-icons circle red">play_arrow</i></a>
@@ -117,7 +117,7 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
     return Math.pow(2, 20) * mega;
   }
 
-  var extension = file.type.split('/').pop();   //Separa / y Elimina del tipo "type: audio/mpeg"
+  var extension = file.type.split('/').pop(); //Separa / y Elimina del tipo "type: audio/mpeg"
 
 
   if (extensiones_p.indexOf(extension) != -1) { //Si encuentra un archivo con las extensiones admitidas...
@@ -127,7 +127,7 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
 
       Subir_Buffer(file); //Sube la imagen
 
-    }else {
+    } else {
       M.toast({ //Avisos de ALERTA
         html: 'Archivo demasiado Grande',
         displayLength: 1500,
@@ -138,7 +138,7 @@ fileInput.addEventListener('change', (e) => { //detecta cuando se sube un archiv
       limpiarFormSubida();
     }
 
-  }else {
+  } else {
     M.toast({
       html: 'Archivo incorrecto: ' + extensiones_p.toString(),
       displayLength: 1500,
@@ -159,7 +159,7 @@ function Subir_Buffer(file) {
 
   const file_r = new FileReader(); //Maneja el archivo para subirlo al buffer, lee sus propiedades
 
-  file_r.readAsDataURL(file);     // Leer desde una ubicacion
+  file_r.readAsDataURL(file); // Leer desde una ubicacion
 
   file_r.onloadstart = (event) => {
     console.log("comenzando");
@@ -184,7 +184,7 @@ function Subir_Buffer(file) {
 var formulario = document.getElementById("form_datos");
 
 formulario.addEventListener('submit', (event) => {
-  event.preventDefault();    //previene las acciones comunes del formulario
+  event.preventDefault(); //previene las acciones comunes del formulario
 
   if (fileInput.files.length == 0) { //Si se intenta subir sin seleccionar archivo
     M.toast({
@@ -279,15 +279,16 @@ function conexion_WS() {
     console.log("Server: ", event.data);
 
     var datosINServidor = event.data;
-    var dataJson = JSON.parse(datosINServidor);
+    dataJson = JSON.parse(datosINServidor);   //Variable global almacena el mensaje del Servidor
 
-    var Estado = dataJson.estado;
-    var ip = dataJson.IP;
+    //Datos sobre estado de conexión recibidos desde el Servidor
+    if ("estado" in dataJson) {
+      EstadoConexion();
+    }
 
-    if(Estado === 3){
-      console.log("conectado");
-      console.log(ip);
-      document.getElementById('conex').innerHTML= `<h5>Conectado IP: ${ip}</h5>`
+    //Datos del estado de Reproducción recibidos desde el Servidor
+    if("EREPRO" in dataJson){
+      EstadoReproduccion();
     }
 
   };
@@ -300,7 +301,7 @@ function conexion_WS() {
       classes: "red lighten-1 rounded"
     });
 
-    document.getElementById('conex').innerHTML= '';
+    document.getElementById('conex').innerHTML = '';
 
     //Cambio Estado de color Botones Conexión
     document.getElementById('conexionWs_off').className = 'btn disabled';
@@ -336,7 +337,7 @@ function PeticionRefrescoSD() {
 ===================REPRODUCE ARCHIVOS DE LA SD ==============================
 */
 //parámetros pasados desde el "href" del icono play
-function ReproducirSD(nombreFile){
+function ReproducirSD(nombreFile) {
   //Crea un objeto para almacenar el nombre del fichero a reproducir
   var objetoJS_repro = {
     PLAY: nombreFile
@@ -345,7 +346,7 @@ function ReproducirSD(nombreFile){
   //convierte el objeto javascript en JSON
   var envioPlay = JSON.stringify(objetoJS_repro);
   console.log(envioPlay);
-  conexionWs.send(envioPlay);  //Envio...
+  conexionWs.send(envioPlay); //Envio...
   document.getElementById('nombreArchivoRepro').innerHTML = `<h7>${nombreFile}</h7>`
 }
 //===============FIN REPRODUCIR ARCHIVOS SD=================================
@@ -354,16 +355,16 @@ function ReproducirSD(nombreFile){
 /*
 =======================CONTROL VOLUMEN SD====================================
 */
-function envioVolumen(){
+function envioVolumen() {
   const volumenSD = document.querySelector('#vol').value; //Recoje el Volumen del Slider
   console.log(volumenSD);
   var envioVolumenSD = '{"VOL":' + volumenSD + '}';
- 
+
   conexionWs.send(envioVolumenSD);
 }
 
 //========================BOTON STOP SD=======================================
-function StopSD(){
+function StopSD() {
   var SD_stop = '{"STOP":' + 1 + '}';
   conexionWs.send(SD_stop);
   document.getElementById('nombreArchivoRepro').innerHTML = '';
@@ -389,3 +390,22 @@ function BorrarDatos(nombreFichero) {
 /*
 =========================PETICIONES DATOS AL SERVIDOR==================================
 */
+//Estado de la Conexión, enviado desde el Servidor
+function EstadoConexion() {
+  var Estado = dataJson.estado;
+  var ip = dataJson.IP;
+
+  if (Estado === 3) {
+    console.log("conectado");
+    console.log(ip);
+    document.getElementById('conex').innerHTML = `<h5>Conectado IP: ${ip}</h5>`
+  }
+}
+//////////////////////FIN ESTADO CONEXIÓN//////////////////////////////
+
+//Estado de la Reproducción de la tarjeta SD
+function EstadoReproduccion(){
+  var EstadoRepro = dataJson.EREPRO;
+  console.log(EstadoRepro);
+  document.getElementById('nombreArchivoRepro').innerHTML= '';
+}
