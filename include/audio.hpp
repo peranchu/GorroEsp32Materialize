@@ -14,8 +14,8 @@ bool estado;
 void audioConfig(){
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
     audio.setVolume(10); //0...21
-//audio.connecttoFS(SD, "/0002.mp3");
 }
+///////////////////////FIN CONFIG INICIAL AUDIO///////////////////////
 
 
 //=============================VOLUMEN SD======================================
@@ -28,13 +28,14 @@ int GetVolume(int volumen){
 
 //====================REPRODUCIR ARCHIVOS TARJETA SD============================
 void PlayFilesSD(String PlayFile){
-    Serial.println("DentroAudio");
-    audio.connecttoFS(SD, PlayFile);
+    //Serial.println("DentroAudio");
+    audio.connecttoFS(SD, PlayFile);  //Reproduce el archivo especificado desde la SD
     estado = true;
 }
 //========================FIN REPRODUCTOR ARCHIVOS SD=========================
 
 //========================STOP SD REPRODUCTOR================================
 void Stop_Reproductor(){
-    audio.stopSong();
+    audio.stopSong();   //Detiene la reproducción actual, "Botón STOP"
+    estado = false;
 }

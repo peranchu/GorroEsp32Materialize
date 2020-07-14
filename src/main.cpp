@@ -47,13 +47,12 @@ void setup() {
   }
   /////////////////////////////////////
 
-  ConnectWiFi_STA();         //INICIA CONEXIÓN WiFi y MDNS
+  ConnectWiFi_STA();         //INICIA CONEXIÓN WiFi y MDNS ,   "esp32_utils.hpp"
+  InitWebSocket();          //INICIA LOS SERVICIOS WEBSOCKET,  "websocket.hpp"
 
-  InitWebSocket();          //INICIA LOS SERVICIOS WEBSOCKET
+  InitServer();            //INICIA SERVIDOR, "server.hpp",    "server.hpp"
 
-  InitServer();            //INICIA SERVIDOR
-
-  audioConfig();          //CONFIGURACIÓN SISTEMA DE AUDIO
+  audioConfig();          //CONFIGURACIÓN SISTEMA DE AUDIO,    "audio.hpp"
 
 }
 
@@ -73,7 +72,7 @@ void loop() {
 
   if(audio.isRunning() == 0 && EstadoReproActual == true){
     EstadoReproActual = false;
-    EstadoRepro();   //Envía el estado de reproducción al cliente
+    EstadoRepro();   //Envía el estado de reproducción al cliente, "websocket.hpp"
   }
 }
 

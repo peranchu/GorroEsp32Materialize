@@ -47,7 +47,7 @@ void BorradoArchivosSD(String nombre_borrar){
 */
 //Explora los ficheros de la tarjeta SD
 void explorar_ficheros(){
-  numero_ficheros = contador_archivos();  //Cuenta el numero de archivos escritos en la SD
+  numero_ficheros = contador_archivos();  //Cuenta el numero de archivos escritos en la SD, "archivos.hpp"
   root = SD.open("/");
 
   SPIFFS.remove("/dir.json");     //Limpia el archivo para ser leido

@@ -21,22 +21,26 @@ const char* ArchivoPlay;    //Almacena el archivo a reproducir de la SD
 */
 //Envio Petición Inicial de estado de conexión
 void EnvioInicial(){
-    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
-        StaticJsonDocument<300> Jsondoc;
+    if(globalClient != NULL && globalClient->status() == WS_CONNECTED){  //Si hay algún cliente y esta conectado...
+        StaticJsonDocument<300> Jsondoc;    //Se crea el documento JSON
 
-        String response;
+        String response;      //Almacenará el JSON
+
+        //Crea el Formato con los datos requeridos
         Jsondoc["estado"] = WiFi.status();
         Jsondoc["IP"] = WiFi.localIP().toString();
         Jsondoc["MDNS"] = hostname;
-        serializeJson(Jsondoc, response);
 
-        globalClient->text(response);
+        serializeJson(Jsondoc, response);  //crea el documento JSON
+
+        globalClient->text(response);      //Envía el Json al Cliente
     }
 }
 ////////////////FIN PETICIÓN ESTADO DE CONEXIÓN//////////////////////////////////////////////
 
 
-//Envío Estado de Reproducción de la SD
+
+//////////////////Envío Estado de Reproducción de la SD///////////////////////////////////////
 void EstadoRepro(){
     if(globalClient != NULL && globalClient->status() == WS_CONNECTED){
         StaticJsonDocument<200> JsonErepro;
@@ -48,36 +52,41 @@ void EstadoRepro(){
         globalClient->text(EstaRepro);
     }
 }
+///////////////////////////FIN ESTADO REPRODUCCIÓN SD/////////////////////////////////////////
+/*
+====================FIN ENVIO DATOS SERVIDOR A CLIENTE==========================================
+*/
 
 
 
 /*
 ========ANÁLISIS DE DATOS DE LAS CADENAS DE ENTRADA=======================================
 */
+//Datos que llegan desde el cliente al Servidor
 void CadenaEntrada(String datosEntrada){
     //Serial.println(datosEntrada);
     DynamicJsonDocument doc(200);   //creación del objeto JSON
 
-    DeserializationError error = deserializeJson(doc, datosEntrada);
+    DeserializationError error = deserializeJson(doc, datosEntrada); //comprueba que el JSON entrante es correcto
     if(error){
         Serial.print("Deserializacion JSON Fallida: ");
         Serial.println(error.c_str());
         return;
     }
 
+    ///////////////////////MENSAJES DE ENTRADA DESDE EL CLIENTE///////////////////////////////
     //Mensaje de "refresh" de la lista
     RefreshEstado = doc["REFRESH"];     //Estado Botón Refresco de Datos SD
     if(RefreshEstado){
-        explorar_ficheros();            //Refresca los ficheros de la SD
+        explorar_ficheros();            //Refresca los ficheros de la SD, "archivos.hpp"
         RefreshEstado = false;
     }
 
     //Mensaje de Borrado de Archivos de la SD 
     int posDelete = datosEntrada.indexOf("ERASE");  //Si la cadena coincide con el mensaje
     if(posDelete >=0){
-        NombreBorrado = doc["ERASE"];
-        BorradoArchivosSD(NombreBorrado);
-        //Serial.print(NombreBorrado);
+        NombreBorrado = doc["ERASE"];               //Captura del valor desde la clave enviada en el Json del servidor
+        BorradoArchivosSD(NombreBorrado);           //Borra el archivo seleccionado, "archivos.hpp"
     } 
 
     //Mensaje de Reproduccion de Archivo de la SD
@@ -85,7 +94,7 @@ void CadenaEntrada(String datosEntrada){
     if(posPlay >=0){
         ArchivoPlay = doc["PLAY"];
         Serial.println(ArchivoPlay);
-        PlayFilesSD(ArchivoPlay);
+        PlayFilesSD(ArchivoPlay);     //Reproduce el archivo, "audio.hpp"
     }
 
     //Mensaje de STOP del Archivo SD
@@ -93,41 +102,44 @@ void CadenaEntrada(String datosEntrada){
     if(Stop_SD >=0){
         Stop_SD_Card = doc["STOP"];
         Serial.println(Stop_SD_Card);
-        Stop_Reproductor();
+        Stop_Reproductor();           //Deteine la reproducción, "audio.hpp"
     }
 
     //Mensaje de Control VOLUMEN
     int Volumen_SD =  datosEntrada.indexOf("VOL");
     if(Volumen_SD >=0){
         Volumen = doc["VOL"];
-        volumenActual = GetVolume(Volumen);
+        volumenActual = GetVolume(Volumen);  //Maneja el volumen de la reproducción, "audio.hpp"
     } 
 }
-
 /*
 ====================FIN ANÁLISIS CADENA DE ENTRADA=============================
 */
 
 
-//___________ESCUCHA LOS EVENTOS DEL SOCKET//_______________________
+
+/*
+====================FUNCIÓN QUE RECOGE LOS EVENTOS ENTRANTES A TRAVÉS DEL SOCKET===================
+*/
+//_ESCUCHA LOS EVENTOS DEL SOCKET_______________________
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
                 AwsEventType type, void *arg, uint8_t *data, size_t len){
 
-    if(type == WS_EVT_CONNECT){
+    if(type == WS_EVT_CONNECT){   //Cliente conectado
         Serial.println("");
         Serial.println("Conexión Cliente al WebSocket Recibida");
         globalClient = client;
 
-        EnvioInicial();   //Envio del estado de la conexión al cliente
+        EnvioInicial();   //Envio del estado de la conexión al cliente "websocket.hpp"
 
-    }else if(type == WS_EVT_DISCONNECT){
+    }else if(type == WS_EVT_DISCONNECT){   //Cliente desconectado
         Serial.println("");
         Serial.println("Ciente Desconectado");
         Serial.println("-----------------------");
         globalClient = NULL;
 
-    }else if(type == WS_EVT_DATA){
+    }else if(type == WS_EVT_DATA){  //Llegada de lagún tipo de dato...
         AwsFrameInfo *info = (AwsFrameInfo*)arg;
         String msg = "";
         if(info->final && info->index == 0 && info->len == len){
@@ -138,7 +150,7 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
                 for(size_t i = 0; i < info->len; i++){
                     msg += (char) data[i];
                 }
-                CadenaEntrada(msg);   //Envia la cadena de Entrada para su análisis
+                CadenaEntrada(msg);   //Envia la cadena de Entrada para su análisis "websocket.hpp"
             }
         }
     }
